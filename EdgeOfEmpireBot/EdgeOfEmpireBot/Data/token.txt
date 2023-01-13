@@ -1,0 +1,3 @@
+MTA2MjcxODE4ODAxOTc3NzUzNg.G3FpYJ.MdceEGyBckfLM5PEgL5p_4Zvofsx1oshREM9nI
+
+Environment.SetEnvironmentVariable("MY_VARIABLE", "value", EnvironmentVariableTarget.Machine);
