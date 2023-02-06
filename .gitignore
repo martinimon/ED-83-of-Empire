@@ -5,5 +5,5 @@
 /.vs/
 /EdgeOfEmpireBot/.vs
 /.vs/VSWorkspaceState.json
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.assets.cache
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.GeneratedMSBuildEditorConfig.editorconfig
+/EdgeOfEmpireBot/EdgeOfEmpireBot/obj
+/EdgeOfEmpireBot/EdgeOfEmpireBot/bin
