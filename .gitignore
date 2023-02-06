@@ -2,4 +2,8 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/EdgeOfEmpireBot/EdgeOfEmpireBot/SetTokenEnvironmentVariable.cs
+/.vs/
+/EdgeOfEmpireBot/.vs/
+/EdgeOfEmpireBot/EdgeOfEmpireBot/obj
+/EdgeOfEmpireBot/EdgeOfEmpireBot/bin
+/EdgeOfEmpireBot/token.txt
