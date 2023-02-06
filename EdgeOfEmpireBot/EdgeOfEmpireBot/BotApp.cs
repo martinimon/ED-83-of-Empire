@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 public class BotApp
 {
     private DiscordSocketClient? _client;
-    private readonly IServiceProvider _serviceProvider;
 
     public BotApp()
     {
@@ -26,9 +25,6 @@ public class BotApp
         var _config = new DiscordSocketConfig { MessageCacheSize = 100 };
         this._client = new DiscordSocketClient(_config);
 
-        var collection = new ServiceCollection()
-            .AddSingleton(_config)
-            .AddSingleton<DiscordSocketClient>();
         await this._client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
 
         //  You can assign your bot token to a string, and pass that in to connect.
