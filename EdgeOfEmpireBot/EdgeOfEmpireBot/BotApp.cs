@@ -1,6 +1,5 @@
 ﻿using Discord.WebSocket;
 using Discord;
-using Microsoft.Extensions.DependencyInjection;
 
 public class BotApp
 {

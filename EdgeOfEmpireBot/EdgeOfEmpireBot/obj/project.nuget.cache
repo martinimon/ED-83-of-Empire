@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "eKmorqej6qLQ5GSw71Yp0Phy2g562u0iZ174DuL9/Ggg4JexSfM9MMqtAA+eF95l0cbSpW5uGkjgIolsXHb8Kw==",
+  "dgSpecHash": "pjSOUzD6xVy4pAwIB7r7vtt8cJZ7bb9LHYSTYayJCZm85fKmjC7MGUyRjb6I4VDZdGkvi9lOEf32qGoLjFhC8Q==",
   "success": true,
-  "projectFilePath": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
+  "projectFilePath": "C:\\Users\\ellio\\source\\repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\ellio\\.nuget\\packages\\discord.net\\3.9.0\\discord.net.3.9.0.nupkg.sha512",
     "C:\\Users\\ellio\\.nuget\\packages\\discord.net.commands\\3.9.0\\discord.net.commands.3.9.0.nupkg.sha512",

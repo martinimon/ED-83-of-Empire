@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {}
+    "C:\\Users\\ellio\\source\\repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {
+    "C:\\Users\\ellio\\source\\repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
+        "projectUniqueName": "C:\\Users\\ellio\\source\\repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
         "projectName": "EdgeOfEmpireBot",
-        "projectPath": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
+        "projectPath": "C:\\Users\\ellio\\source\\repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
         "packagesPath": "C:\\Users\\ellio\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\obj\\",
         "projectStyle": "PackageReference",
