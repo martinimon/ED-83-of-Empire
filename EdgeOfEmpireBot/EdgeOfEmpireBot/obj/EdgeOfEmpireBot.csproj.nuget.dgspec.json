@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Folders\\Repos\\Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {}
+    "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {}
   },
   "projects": {
-    "D:\\Folders\\Repos\\Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {
+    "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Folders\\Repos\\Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
+        "projectUniqueName": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
         "projectName": "EdgeOfEmpireBot",
-        "projectPath": "D:\\Folders\\Repos\\Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
-        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-        "outputPath": "D:\\Folders\\Repos\\Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\obj\\",
+        "projectPath": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\EdgeOfEmpireBot.csproj",
+        "packagesPath": "C:\\Users\\ellio\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ellio\\Source\\Repos\\ED-83-of-Empire\\EdgeOfEmpireBot\\EdgeOfEmpireBot\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "D:\\Programs\\MicrosoftVS\\Shared\\NuGetPackages"
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ellio\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -65,7 +66,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
