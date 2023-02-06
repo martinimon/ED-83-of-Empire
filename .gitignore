@@ -3,7 +3,7 @@
 ################################################################################
 
 /.vs/
-/EdgeOfEmpireBot/.vs
-/.vs/VSWorkspaceState.json
+/EdgeOfEmpireBot/.vs/
 /EdgeOfEmpireBot/EdgeOfEmpireBot/obj
 /EdgeOfEmpireBot/EdgeOfEmpireBot/bin
+/EdgeOfEmpireBot/token.txt
