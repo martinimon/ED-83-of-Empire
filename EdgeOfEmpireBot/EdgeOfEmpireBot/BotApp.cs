@@ -1,53 +1,63 @@
 ﻿using Discord.WebSocket;
 using Discord;
-using System.Reflection;
+using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 
 public class BotApp
 {
-    private DiscordSocketClient? client;
+    private readonly IServiceProvider serviceProvider;
+    private readonly DiscordSocketClient client;
 
     /// <summary>
     /// The bot itself.
     /// </summary>
     public BotApp()
     {
-        this.client = new DiscordSocketClient();
+        serviceProvider = CreateProvider();
+        client = serviceProvider.GetRequiredService<DiscordSocketClient>();
     }
-    static void Main(string[] args) => new BotApp().MainAsync().GetAwaiter().GetResult();
+
+    private IServiceProvider CreateProvider()
+    {
+        var config = new DiscordSocketConfig { MessageCacheSize = 100 };
+        var collection = new ServiceCollection().AddSingleton(config).AddSingleton<DiscordSocketClient>();
+        return collection.BuildServiceProvider();
+    }
+
+    static void Main(string[] args) => new BotApp().MainAsync(args).GetAwaiter().GetResult();
 
     /// <summary>
     /// The main function that starts the bot.
     /// </summary>
-    public async Task MainAsync()
+    public async Task MainAsync(string[] args)
     {
-        await InitBot();
-        // Block this task until the program is closed.
-        await Task.Delay(-1);
 
-    }
+        var token = GetToken();
 
-    /// <summary>
-    /// Initialize and starts the bot.
-    /// </summary>
-    private async Task InitBot()
-    {
-        var token = getToken();
-
-        var config = new DiscordSocketConfig { MessageCacheSize = 100 };
-        this.client = new DiscordSocketClient(config);
-
-        await this.client.LoginAsync(TokenType.Bot, token);
+        client.Log += Log;
+        client.MessageReceived += MessageReceived;
+        await client.LoginAsync(TokenType.Bot, token);
         //Starts the bot
-        await this.client.StartAsync();
+        await client.StartAsync();
 
-        this.client.MessageUpdated += MessageUpdated;
-        this.client.Ready += () =>
+        client.MessageUpdated += MessageUpdated;
+        client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
         };
+        // Block this task until the program is closed.
+        await Task.Delay(Timeout.Infinite);
 
-        this.client.Log += Log;
+    }
+
+    private Task MessageReceived(SocketMessage msg)
+    {
+        if (!msg.Author.IsBot)
+        {
+            Console.WriteLine(msg);
+        }
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -68,7 +78,7 @@ public class BotApp
     /// Gets the Discord Token
     /// </summary>
     /// <returns>the token string</returns>
-    private string getToken()
+    private string GetToken()
     {
         var token = string.Empty;
 
@@ -87,12 +97,12 @@ public class BotApp
     /// <summary>
     /// Logs a message to console.
     /// </summary>
-    /// <param name="msg"></param>
-    private Task Log(LogMessage msg)
-    {
-        Console.WriteLine(msg.ToString());
-        return Task.CompletedTask;
-    }
+    /// <param name="message"></param>
 
+    private async Task Log(LogMessage message)
+    {
+        Console.WriteLine(message);
+        await Task.CompletedTask;
+    }
 
 }
