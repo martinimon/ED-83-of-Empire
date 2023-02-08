@@ -23,7 +23,6 @@ public class BotApp
         await InitBot();
         // Block this task until the program is closed.
         await Task.Delay(-1);
-
     }
 
     /// <summary>
@@ -38,21 +37,12 @@ public class BotApp
 
         await this.client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
 
-        //  You can assign your bot token to a string, and pass that in to connect.
-        //  This is, however, insecure, particularly if you plan to have your code hosted in a public repository.
-
-        // Some alternative options would be to keep your token in an Environment Variable or a standalone file.
-        // var token = Environment.GetEnvironmentVariable("NameOfYourEnvironmentVariable");
-        // var token = File.ReadAllText("token.txt");
-
         this.client.MessageUpdated += MessageUpdated;
         this.client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
         };
-
-        //Environment.GetEnvironmentVariable("EdgeOfEmpireBotToken");
 
         if (token == null)
         {
@@ -61,8 +51,6 @@ public class BotApp
             Console.WriteLine("No token found.. Adding token now...");
             token = Environment.GetEnvironmentVariable("EdgeOfEmpireBotToken");
         }
-
-
         this.client = new DiscordSocketClient();
         this.client.Log += Log;
 
