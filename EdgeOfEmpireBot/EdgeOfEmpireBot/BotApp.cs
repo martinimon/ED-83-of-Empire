@@ -7,7 +7,7 @@ public class BotApp
 {
     private readonly IServiceProvider serviceProvider;
     private readonly DiscordSocketClient client;
-
+    private readonly ulong channelId = 1062707370809098291;
     /// <summary>
     /// The bot itself.
     /// </summary>
@@ -35,17 +35,23 @@ public class BotApp
         var token = GetToken();
 
         client.Log += Log;
+        client.MessageUpdated += MessageUpdated;
         client.MessageReceived += MessageReceived;
         await client.LoginAsync(TokenType.Bot, token);
         //Starts the bot
         await client.StartAsync();
 
-        client.MessageUpdated += MessageUpdated;
         client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
         };
+
+        /// !! URGENT DO NOT REMOVE !!
+        /// SENDS VERY IMPORTANT START UP MESSAGE
+        var channel = await client.GetChannelAsync(channelId) as IMessageChannel;
+        await channel!.SendMessageAsync("ScurvyDog");
+
         // Block this task until the program is closed.
         await Task.Delay(Timeout.Infinite);
 
@@ -53,10 +59,7 @@ public class BotApp
 
     private Task MessageReceived(SocketMessage msg)
     {
-        if (!msg.Author.IsBot)
-        {
-            Console.WriteLine(msg);
-        }
+        Console.WriteLine(msg.Author+ ": " + msg.Content);
         return Task.CompletedTask;
     }
 
