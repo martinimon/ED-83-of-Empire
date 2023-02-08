@@ -4,21 +4,6 @@
 
 /.vs/
 /EdgeOfEmpireBot/.vs/
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj
-/EdgeOfEmpireBot/EdgeOfEmpireBot/bin
-/EdgeOfEmpireBot/token.txt
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/ref/EdgeOfEmpireBot.dll
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.csproj.CoreCompileInputs.cache
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.csproj.FileListAbsolute.txt
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/refint/EdgeOfEmpireBot.dll
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/project.nuget.cache
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/project.assets.json
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/EdgeOfEmpireBot.csproj.nuget.g.props
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/EdgeOfEmpireBot.csproj.nuget.dgspec.json
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.pdb
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/Debug/net7.0/EdgeOfEmpireBot.dll
-/EdgeOfEmpireBot/EdgeOfEmpireBot/bin/Debug/net7.0/EdgeOfEmpireBot.deps.json
-/EdgeOfEmpireBot/EdgeOfEmpireBot/bin/Debug/net7.0/EdgeOfEmpireBot.dll
-/EdgeOfEmpireBot/EdgeOfEmpireBot/bin/Debug/net7.0/EdgeOfEmpireBot.pdb
-/EdgeOfEmpireBot/EdgeOfEmpireBot/Data/token.txt
+/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/**
+/EdgeOfEmpireBot/EdgeOfEmpireBot/bin/**
 /EdgeOfEmpireBot/EdgeOfEmpireBot/Data/token.txt
