@@ -23,6 +23,7 @@ public class BotApp
         await InitBot();
         // Block this task until the program is closed.
         await Task.Delay(-1);
+
     }
 
     /// <summary>
@@ -35,7 +36,9 @@ public class BotApp
         var config = new DiscordSocketConfig { MessageCacheSize = 100 };
         this.client = new DiscordSocketClient(config);
 
-        await this.client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
+        await this.client.LoginAsync(TokenType.Bot, token);
+        //Starts the bot
+        await this.client.StartAsync();
 
         this.client.MessageUpdated += MessageUpdated;
         this.client.Ready += () =>
@@ -44,20 +47,7 @@ public class BotApp
             return Task.CompletedTask;
         };
 
-        if (token == null)
-        {
-            // Need to implement a better way of storing/generating the token. 
-            // Can't use Token itself as git bots look for discord tokens to be malicious. 
-            Console.WriteLine("No token found.. Adding token now...");
-            token = Environment.GetEnvironmentVariable("EdgeOfEmpireBotToken");
-        }
-        this.client = new DiscordSocketClient();
         this.client.Log += Log;
-
-        await this.client.LoginAsync(TokenType.Bot, token);
-
-        //Starts the bot
-        await this.client.StartAsync();
     }
 
     /// <summary>

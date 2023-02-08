@@ -2,8 +2,10 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/
-/EdgeOfEmpireBot/.vs/
-/EdgeOfEmpireBot/EdgeOfEmpireBot/obj/**
-/EdgeOfEmpireBot/EdgeOfEmpireBot/bin/**
-/EdgeOfEmpireBot/EdgeOfEmpireBot/Data/token.txt
+**/.vs/
+**/Debug
+**/Release
+**/EdgeOfEmpireBot/obj/**
+**/EdgeOfEmpireBot/bin/**
+**/EdgeOfEmpireBot/Data/token.txt
+**/EdgeOfEmpireBot/bin/Debug/net7.0/**
