@@ -35,7 +35,6 @@ public class BotApp
         await InitializeBot();
         await VerifyBotIsConnected();
 
-
         // Block this task until the program is closed.
         await Task.Delay(Timeout.Infinite);
     }
@@ -82,7 +81,6 @@ public class BotApp
         var channel = await this.client.GetChannelAsync((ulong)channelId) as IMessageChannel;
         await channel!.SendMessageAsync("ScurvyDog");
     }
-
 
     /// <summary>
     /// TODO
