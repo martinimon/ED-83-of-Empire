@@ -1,75 +1,126 @@
 ﻿using Discord.WebSocket;
 using Discord;
-using System.Reflection;
+using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
+using System.Threading.Channels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class BotApp
 {
-    private DiscordSocketClient? client;
+    private readonly IServiceProvider serviceProvider;
+    private readonly DiscordSocketClient client;
 
     /// <summary>
     /// The bot itself.
     /// </summary>
     public BotApp()
     {
-        this.client = new DiscordSocketClient();
+        serviceProvider = CreateProvider();
+        this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
+        
     }
-    static void Main(string[] args) => new BotApp().MainAsync().GetAwaiter().GetResult();
+
+    private IServiceProvider CreateProvider()
+    {
+        var config = new DiscordSocketConfig
+        {
+            MessageCacheSize = 100,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+        };        
+        var collection = new ServiceCollection().AddSingleton(config).AddSingleton<DiscordSocketClient>();
+        return collection.BuildServiceProvider();
+    }
+
+    static void Main(string[] args) => new BotApp().MainAsync(args).GetAwaiter().GetResult();
 
     /// <summary>
     /// The main function that starts the bot.
     /// </summary>
-    public async Task MainAsync()
+    public async Task MainAsync(string[] args)
     {
-        await InitBot();
-        // Block this task until the program is closed.
-        await Task.Delay(-1);
+        await InitializeBot();
+        await VerifyBotIsConnected();
 
+        // Block this task until the program is closed.
+        await Task.Delay(Timeout.Infinite);
     }
 
     /// <summary>
-    /// Initialize and starts the bot.
+    /// Starts and configures the bot.
     /// </summary>
-    private async Task InitBot()
+    private async Task InitializeBot()
     {
-        var token = getToken();
+        var token = GetToken();
 
-        var config = new DiscordSocketConfig { MessageCacheSize = 100 };
-        this.client = new DiscordSocketClient(config);
-
-        await this.client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable(token));
-
-        //  You can assign your bot token to a string, and pass that in to connect.
-        //  This is, however, insecure, particularly if you plan to have your code hosted in a public repository.
-
-        // Some alternative options would be to keep your token in an Environment Variable or a standalone file.
-        // var token = Environment.GetEnvironmentVariable("NameOfYourEnvironmentVariable");
-        // var token = File.ReadAllText("token.txt");
-
+        this.client.Log += Log;
         this.client.MessageUpdated += MessageUpdated;
+        this.client.MessageReceived += MessageReceived;
+
+        await this.client.LoginAsync(TokenType.Bot, token);
+        //Starts the bot
+        await this.client.StartAsync();
+
         this.client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
         };
+    }
 
-        //Environment.GetEnvironmentVariable("EdgeOfEmpireBotToken");
+    /// <summary>
+    /// Logs a user message the Bot can read to Discord. 
+    /// </summary>
+    /// <param name="msg"></param>
+    //private Task MessageReceived(SocketMessage msg)
+    private async Task MessageReceived(SocketMessage msg)
+    {
+        //Logs message to console
+        Console.WriteLine(msg.Author + ": " + msg.Content);
+        
 
-        if (token == null)
+         await SendMessage(msg);
+
+
+       // return Task.CompletedTask;
+    }
+
+    private async Task SendMessage(SocketMessage msg)
+    {
+        var channel = msg.Channel;
+        var message = string.Empty;
+
+        if (msg.Content.StartsWith("."))
         {
-            // Need to implement a better way of storing/generating the token. 
-            // Can't use Token itself as git bots look for discord tokens to be malicious. 
-            Console.WriteLine("No token found.. Adding token now...");
-            token = Environment.GetEnvironmentVariable("EdgeOfEmpireBotToken");
+            message = "```" + msg.Content + "```";
+
+            // Discord API prevents messages greater than 2000 characters from sending.
+            if (message.Length > 2000)
+            {
+                message = "```ERROR 2319 - Message is greater than the maximum 2000 character limit.```";
+                Console.WriteLine(message);
+            }
         }
+        else
+        {
+            // Message does not need a response so ignore. 
+        }
+        
+        await channel!.SendMessageAsync(message);
+    }
 
+    /// <summary>
+    /// Verifies the Bot can send messages to Discord.
+    /// </summary>
+    private async Task VerifyBotIsConnected()
+    {
+        // TODO: Consider replacing this to data. 
+        var channelId = 1062707370809098291;
 
-        this.client = new DiscordSocketClient();
-        this.client.Log += Log;
-
-        await this.client.LoginAsync(TokenType.Bot, token);
-
-        //Starts the bot
-        await this.client.StartAsync();
+        /// !! URGENT DO NOT REMOVE !!
+        /// SENDS VERY IMPORTANT START UP MESSAGE
+        var channel = await this.client.GetChannelAsync((ulong)channelId) as IMessageChannel;
+        await channel!.SendMessageAsync("ScurvyDog");
     }
 
     /// <summary>
@@ -90,7 +141,7 @@ public class BotApp
     /// Gets the Discord Token
     /// </summary>
     /// <returns>the token string</returns>
-    private string getToken()
+    private string GetToken()
     {
         var token = string.Empty;
 
@@ -109,12 +160,10 @@ public class BotApp
     /// <summary>
     /// Logs a message to console.
     /// </summary>
-    /// <param name="msg"></param>
-    private Task Log(LogMessage msg)
+    /// <param name="message"></param>
+    private async Task Log(LogMessage message)
     {
-        Console.WriteLine(msg.ToString());
-        return Task.CompletedTask;
+        Console.WriteLine(message);
+        await Task.CompletedTask;
     }
-
-
 }

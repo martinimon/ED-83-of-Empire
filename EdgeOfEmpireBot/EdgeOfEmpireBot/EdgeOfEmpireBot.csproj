@@ -10,9 +10,13 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.9.0" />
     <PackageReference Include="Discord.Net.Rest" Version="3.9.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Data\token.template.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Data\token.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
