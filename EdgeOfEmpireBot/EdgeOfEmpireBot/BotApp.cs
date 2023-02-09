@@ -46,6 +46,9 @@ public class BotApp
         await Task.Delay(Timeout.Infinite);
     }
 
+    /// <summary>
+    /// Starts and configures the bot.
+    /// </summary>
     private async Task InitializeBot()
     {
         var token = GetToken();
