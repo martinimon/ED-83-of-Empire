@@ -2,12 +2,13 @@
 using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
 
 public class BotApp
 {
     private readonly IServiceProvider serviceProvider;
     private readonly DiscordSocketClient client;
-    private readonly ulong channelId = 1062707370809098291;
+
     /// <summary>
     /// The bot itself.
     /// </summary>
@@ -31,37 +32,57 @@ public class BotApp
     /// </summary>
     public async Task MainAsync(string[] args)
     {
+        await InitializeBot();
+        await VerifyBotIsConnected();
 
+
+        // Block this task until the program is closed.
+        await Task.Delay(Timeout.Infinite);
+    }
+
+    private async Task InitializeBot()
+    {
         var token = GetToken();
 
-        client.Log += Log;
-        client.MessageUpdated += MessageUpdated;
-        client.MessageReceived += MessageReceived;
-        await client.LoginAsync(TokenType.Bot, token);
-        //Starts the bot
-        await client.StartAsync();
+        this.client.Log += Log;
+        this.client.MessageUpdated += MessageUpdated;
+        this.client.MessageReceived += MessageReceived;
 
-        client.Ready += () =>
+        await this.client.LoginAsync(TokenType.Bot, token);
+        //Starts the bot
+        await this.client.StartAsync();
+
+        this.client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
         };
-
-        /// !! URGENT DO NOT REMOVE !!
-        /// SENDS VERY IMPORTANT START UP MESSAGE
-        var channel = await client.GetChannelAsync(channelId) as IMessageChannel;
-        await channel!.SendMessageAsync("ScurvyDog");
-
-        // Block this task until the program is closed.
-        await Task.Delay(Timeout.Infinite);
-
     }
 
+    /// <summary>
+    /// Logs a user message the Bot can read to Discord. 
+    /// </summary>
+    /// <param name="msg"></param>
     private Task MessageReceived(SocketMessage msg)
     {
         Console.WriteLine(msg.Author+ ": " + msg.Content);
         return Task.CompletedTask;
     }
+
+    /// <summary>
+    /// Verifies the Bot can send messages to Discord.
+    /// </summary>
+    private async Task VerifyBotIsConnected()
+    {
+        // TODO: Consider replacing this to data. 
+        var channelId = 1062707370809098291;
+
+        /// !! URGENT DO NOT REMOVE !!
+        /// SENDS VERY IMPORTANT START UP MESSAGE
+        var channel = await this.client.GetChannelAsync((ulong)channelId) as IMessageChannel;
+        await channel!.SendMessageAsync("ScurvyDog");
+    }
+
 
     /// <summary>
     /// TODO
@@ -101,11 +122,9 @@ public class BotApp
     /// Logs a message to console.
     /// </summary>
     /// <param name="message"></param>
-
     private async Task Log(LogMessage message)
     {
         Console.WriteLine(message);
         await Task.CompletedTask;
     }
-
 }
