@@ -3,6 +3,8 @@ using Discord;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel;
+using System.Threading.Channels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class BotApp
 {
@@ -15,12 +17,17 @@ public class BotApp
     public BotApp()
     {
         serviceProvider = CreateProvider();
-        client = serviceProvider.GetRequiredService<DiscordSocketClient>();
+        this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
+        
     }
 
     private IServiceProvider CreateProvider()
     {
-        var config = new DiscordSocketConfig { MessageCacheSize = 100 };
+        var config = new DiscordSocketConfig
+        {
+            MessageCacheSize = 100,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+        };        
         var collection = new ServiceCollection().AddSingleton(config).AddSingleton<DiscordSocketClient>();
         return collection.BuildServiceProvider();
     }
@@ -62,10 +69,41 @@ public class BotApp
     /// Logs a user message the Bot can read to Discord. 
     /// </summary>
     /// <param name="msg"></param>
-    private Task MessageReceived(SocketMessage msg)
+    //private Task MessageReceived(SocketMessage msg)
+    private async Task MessageReceived(SocketMessage msg)
     {
-        Console.WriteLine(msg.Author+ ": " + msg.Content);
-        return Task.CompletedTask;
+        //Logs message to console
+        Console.WriteLine(msg.Author + ": " + msg.Content);
+        
+
+         await SendMessage(msg);
+
+
+       // return Task.CompletedTask;
+    }
+
+    private async Task SendMessage(SocketMessage msg)
+    {
+        var channel = msg.Channel;
+        var message = string.Empty;
+
+        if (msg.Content.StartsWith("."))
+        {
+            message = "```" + msg.Content + "```";
+
+            // Discord API prevents messages greater than 2000 characters from sending.
+            if (message.Length > 2000)
+            {
+                message = "```ERROR 2319 - Message is greater than the maximum 2000 character limit.```";
+                Console.WriteLine(message);
+            }
+        }
+        else
+        {
+            // Message does not need a response so ignore. 
+        }
+        
+        await channel!.SendMessageAsync(message);
     }
 
     /// <summary>
