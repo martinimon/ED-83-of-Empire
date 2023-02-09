@@ -1,15 +1,15 @@
 ﻿using Discord.WebSocket;
 using Discord;
-using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel;
-using System.Threading.Channels;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using EdgeOfEmpireBot.Service;
+using EdgeOfEmpireBot.IService;
 
 public class BotApp
 {
     private readonly IServiceProvider serviceProvider;
     private readonly DiscordSocketClient client;
+    private readonly IMessageService messageService;
+    private readonly IProcessMessageService processMessageService;
 
     /// <summary>
     /// The bot itself.
@@ -18,19 +18,10 @@ public class BotApp
     {
         serviceProvider = CreateProvider();
         this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
-        
+        this.messageService = serviceProvider.GetRequiredService<IMessageService>();
+        this.processMessageService = serviceProvider.GetRequiredService<IProcessMessageService>();
     }
 
-    private IServiceProvider CreateProvider()
-    {
-        var config = new DiscordSocketConfig
-        {
-            MessageCacheSize = 100,
-            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
-        };        
-        var collection = new ServiceCollection().AddSingleton(config).AddSingleton<DiscordSocketClient>();
-        return collection.BuildServiceProvider();
-    }
 
     static void Main(string[] args) => new BotApp().MainAsync(args).GetAwaiter().GetResult();
 
@@ -47,6 +38,26 @@ public class BotApp
     }
 
     /// <summary>
+    /// Configures and registers services. 
+    /// </summary>
+    private IServiceProvider CreateProvider()
+    {
+        var discordConfig = new DiscordSocketConfig
+        {
+            MessageCacheSize = 100,
+            GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.MessageContent
+        };
+        var collection = new ServiceCollection();
+
+        collection.AddSingleton(discordConfig).AddSingleton<DiscordSocketClient>();
+        
+        collection.AddScoped<IMessageService, MessageService>();
+        collection.AddScoped<IProcessMessageService, ProcessMessageService>();
+
+        return collection.BuildServiceProvider();
+    }
+
+    /// <summary>
     /// Starts and configures the bot.
     /// </summary>
     private async Task InitializeBot()
@@ -54,7 +65,11 @@ public class BotApp
         var token = GetToken();
 
         this.client.Log += Log;
-        this.client.MessageUpdated += MessageUpdated;
+        /* TODO: 
+         * Woah we can do message Updated? Need to look into this once some more key functionality is completed.
+         * Have turned off for the moment to prevent any potential issue occurring for the moment. 
+        */
+        //this.client.MessageUpdated += MessageUpdated;
         this.client.MessageReceived += MessageReceived;
 
         await this.client.LoginAsync(TokenType.Bot, token);
@@ -75,38 +90,7 @@ public class BotApp
     //private Task MessageReceived(SocketMessage msg)
     private async Task MessageReceived(SocketMessage msg)
     {
-        //Logs message to console
-        Console.WriteLine(msg.Author + ": " + msg.Content);
-        
-
-         await SendMessage(msg);
-
-
-       // return Task.CompletedTask;
-    }
-
-    private async Task SendMessage(SocketMessage msg)
-    {
-        var channel = msg.Channel;
-        var message = string.Empty;
-
-        if (msg.Content.StartsWith("."))
-        {
-            message = "```" + msg.Content + "```";
-
-            // Discord API prevents messages greater than 2000 characters from sending.
-            if (message.Length > 2000)
-            {
-                message = "```ERROR 2319 - Message is greater than the maximum 2000 character limit.```";
-                Console.WriteLine(message);
-            }
-        }
-        else
-        {
-            // Message does not need a response so ignore. 
-        }
-        
-        await channel!.SendMessageAsync(message);
+       await messageService.ProcessMessage(msg);
     }
 
     /// <summary>
