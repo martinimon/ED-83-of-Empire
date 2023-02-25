@@ -32,24 +32,22 @@ namespace EdgeOfEmpireBot.Service
         {
             try
             {
-                // Indicate the message is for the bot by starting it with a '.'
-                if (message.Content.StartsWith("."))
+                Console.WriteLine("Processing Message...");
+
+                if (!message.Content.StartsWith("."))
                 {
-                    Console.WriteLine("Processing Message...");
-
-                    // Removes the '.' prefix to indicate a bot command. 
-                    var messageCommand = message.Content.Remove(0, 1);
-                    var messageChannel = message.Channel;
-
-                   await ProcessCommand(messageCommand, messageChannel);
-
-                    Console.WriteLine(messageCommand + "  command processed. ");
-
+                    // Ignore message.
+                    Console.WriteLine("Ignoring Message....");
+                    return;
                 }
-                else
-                {
-                    // Ignore the message. 
-                }
+
+                // Removes the '.' prefix to indicate a bot command. 
+                var messageCommand = message.Content.Remove(0, 1);
+                var messageChannel = message.Channel;
+
+                await ProcessCommand(messageCommand, messageChannel);
+
+                Console.WriteLine(messageCommand + "  command processed. ");
             }
             catch (Exception ex)
             {
