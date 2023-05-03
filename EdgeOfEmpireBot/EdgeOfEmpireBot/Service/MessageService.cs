@@ -130,7 +130,7 @@ namespace EdgeOfEmpireBot.Service
                     }
                 }
 
-                // If msg is still an empty string, set it to commandNotFoundMsg
+                // If message is still an empty string, set it to commandNotFoundMsg
                 msg = !string.IsNullOrEmpty(msg) ? $"```{msg}```" : commandNotFoundMsg;
 
                 Console.WriteLine(msg);
@@ -145,4 +145,3 @@ namespace EdgeOfEmpireBot.Service
         }
     }
 }
-
