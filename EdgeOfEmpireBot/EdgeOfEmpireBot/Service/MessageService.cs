@@ -1,5 +1,6 @@
 ﻿using Discord.WebSocket;
 using EdgeOfEmpireBot.IService;
+using System.Text.Json;
 
 namespace EdgeOfEmpireBot.Service
 {
@@ -102,10 +103,46 @@ namespace EdgeOfEmpireBot.Service
        /// <param name="command"></param>
         private async Task ProcessSimpleCommand(string command, ISocketMessageChannel channel)
         {
-            // TODO: ADD Functionality to check a json file (or something TBD) and display 
-            var msg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
-            Console.WriteLine(msg);
-            await SendMessage(msg, channel);
+            Console.WriteLine($"Command: {command}");
+            var filePath = Path.Combine(@"Data\BasicCommands.json");
+            var msg = string.Empty;
+            var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
+
+            try
+            {
+                // Read the entire JSON file into a string
+                var jsonString = File.ReadAllText(filePath);
+
+                // Parse the JSON string into a JsonDocument
+                using JsonDocument doc = JsonDocument.Parse(jsonString);
+
+                // Get the "commands" property from the JSON document
+                if (doc.RootElement.TryGetProperty("commands", out JsonElement commands))
+                {
+                    Console.WriteLine("command property exists.");
+
+                    // Check if the specified command exists in the "commands" object
+                    if (commands.TryGetProperty(command, out JsonElement commandResponse))
+                    {
+                        // If the command exists, return the corresponding response string
+                        Console.WriteLine("command exists.");
+                        msg = commandResponse.GetString();
+                    }
+                }
+
+                // If msg is still an empty string, set it to commandNotFoundMsg
+                msg = !string.IsNullOrEmpty(msg) ? $"```{msg}```" : commandNotFoundMsg;
+
+                Console.WriteLine(msg);
+                await SendMessage(msg, channel);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                msg = "```[Statement] it appears the developer fucked up and broke something.\n[Observation] The error is\n" + ex.Message + "```";
+                await SendMessage(msg, channel);
+            }
         }
     }
 }
+
