@@ -54,7 +54,7 @@ namespace EdgeOfEmpireBot.Service
 
             if (commandClean.Length != 4)
             {
-                msg = "[Observation]: This is not in the correct format.\n[Mockery]: If you Meatbag are capable of processing it, try in the following format.\n```.gameRequest|GameName|GameID|GamePrice```";
+                msg = "[Observation]: This is not in the correct format.\n[Mockery]: If you Meatbag are capable of processing it, try in the following format.\n```.gameRequest |GameName|GameID|GamePrice```";
                 Console.WriteLine(msg);
                 return msg;
             }
@@ -69,7 +69,7 @@ namespace EdgeOfEmpireBot.Service
 
             // Create a new JObject to hold the game information
             JObject newGame = new JObject();
-            newGame["ID"] = gameID;
+            newGame["AppID"] = gameID;
             newGame["Price"] = gamePrice;
 
             // Add the new game information to the existing JArray of games

@@ -20,7 +20,6 @@ public class BotApp
         this.messageService = serviceProvider.GetRequiredService<IMessageService>();
     }
 
-
     static void Main(string[] args) => new BotApp().MainAsync(args).GetAwaiter().GetResult();
 
     /// <summary>
@@ -51,6 +50,7 @@ public class BotApp
         
         collection.AddScoped<IMessageService, MessageService>();
         collection.AddScoped<IDataService, DataService>();
+        collection.AddScoped<ISteamService, SteamService>();
 
         return collection.BuildServiceProvider();
     }

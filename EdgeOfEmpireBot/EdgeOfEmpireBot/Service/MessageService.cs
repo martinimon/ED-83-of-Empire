@@ -1,6 +1,5 @@
 ﻿using Discord.WebSocket;
 using EdgeOfEmpireBot.IService;
-using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
 namespace EdgeOfEmpireBot.Service
@@ -8,6 +7,7 @@ namespace EdgeOfEmpireBot.Service
     public class MessageService : IMessageService
     {
         private readonly IDataService dataService;
+        private readonly ISteamService steamService;
 
         private bool messageIsSafe = false;
 
@@ -15,11 +15,13 @@ namespace EdgeOfEmpireBot.Service
         /// The message service.
         /// </summary>
         /// <param name="dataService">The data service.</param>
-        public MessageService(IDataService dataService)
+        /// <param name="steamService">The Steam service</param>
+        public MessageService(IDataService dataService,
+            ISteamService steamService)
         {
             this.dataService = dataService;
+            this.steamService = steamService;
         }
-
 
         /// <inheritdoc/>
         public async Task SendMessage(string messageResponse, ISocketMessageChannel messageResponseChannel)
@@ -113,6 +115,13 @@ namespace EdgeOfEmpireBot.Service
                     {
                         var msg = this.dataService.GameRequest(command);
                         await SendMessage(msg, channel);
+                        break;
+                    }
+                case "steam":
+                case "games":
+                    {
+                        var msg = await this.steamService.GetGamePrices();
+                        await SendMessage($"{msg}", channel);
                         break;
                     }
                 default:
