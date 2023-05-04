@@ -9,7 +9,6 @@ public class BotApp
     private readonly IServiceProvider serviceProvider;
     private readonly DiscordSocketClient client;
     private readonly IMessageService messageService;
-    private readonly IProcessMessageService processMessageService;
 
     /// <summary>
     /// The bot itself.
@@ -19,7 +18,6 @@ public class BotApp
         serviceProvider = CreateProvider();
         this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
         this.messageService = serviceProvider.GetRequiredService<IMessageService>();
-        this.processMessageService = serviceProvider.GetRequiredService<IProcessMessageService>();
     }
 
 
@@ -52,7 +50,7 @@ public class BotApp
         collection.AddSingleton(discordConfig).AddSingleton<DiscordSocketClient>();
         
         collection.AddScoped<IMessageService, MessageService>();
-        collection.AddScoped<IProcessMessageService, ProcessMessageService>();
+        collection.AddScoped<IDataService, DataService>();
 
         return collection.BuildServiceProvider();
     }
