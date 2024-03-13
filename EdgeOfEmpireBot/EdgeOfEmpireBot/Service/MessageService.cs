@@ -1,6 +1,7 @@
-﻿using Discord.WebSocket;
+﻿using System.Text.Json;
+using Discord.WebSocket;
 using EdgeOfEmpireBot.IService;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace EdgeOfEmpireBot.Service
 {
@@ -26,8 +27,8 @@ namespace EdgeOfEmpireBot.Service
         /// <inheritdoc/>
         public async Task SendMessage(string messageResponse, ISocketMessageChannel messageResponseChannel)
         {
-            var message = string.Empty;
-  
+            string message;
+
             // Discord API prevents messages greater than 2000 characters from sending.
             if (messageResponse.Length > 2000)
             {
@@ -40,7 +41,6 @@ namespace EdgeOfEmpireBot.Service
             }
 
             await messageResponseChannel!.SendMessageAsync(message);
-
         }
 
         /// <inheritdoc/>
@@ -57,7 +57,7 @@ namespace EdgeOfEmpireBot.Service
                     return;
                 }
 
-                // Removes the '.' prefix to indicate a bot command. 
+                // Removes the '.' prefix to indicate a bot command.
                 var messageCommand = message.Content.Remove(0, 1);
                 var messageChannel = message.Channel;
 
@@ -72,7 +72,6 @@ namespace EdgeOfEmpireBot.Service
             }
         }
 
-
         ///<inheritdoc/>
         public bool MessageIsSafe()
         {
@@ -85,42 +84,39 @@ namespace EdgeOfEmpireBot.Service
         /// <param name="command"></param>
         private async Task ProcessCommand(string command, ISocketMessageChannel channel)
         {
-            // Check if the command is a custom command that requires functionality, ie a roll. 
-            // If not a custom command try processing it as a simple command. 
-            // TODO: Consider the order of this once the scope of overall commands have been established. For efficency. 
+            // Check if the command is a custom command that requires functionality, ie a roll.
+            // If not a custom command try processing it as a simple command.
+            // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
             var commandNoParam = command.Split(' ').FirstOrDefault();
-            switch (commandNoParam)
+            switch (commandNoParam?.ToLower())
             {
-
                 case "roll":
                     {
                         // TODO:
                         //RollCommand()
-                        var msg = "```[Statement]: Roll command is not ready yet so I need you to calm down and either wait or implement it yourself Meatbag!```";
+                        const string msg = "```[Statement]: Roll command is not ready yet so I need you to calm down and either wait or implement it yourself Meatbag!```";
                         Console.WriteLine(msg);
                         await SendMessage(msg, channel);
                         break;
                     }
                 case "add":
                     {
-                        var msg =this.dataService.AddCommand(command);
+                        var msg = dataService.AddCommand(command);
                         await SendMessage(msg, channel);
                         break;
                     }
-                case "gameRequest":
+                case "gamerequest":
                 case "gamesRequest":
-                case "GamesRequest":
-                case "gamesrequest":
                 case "gr":
                     {
-                        var msg = this.dataService.GameRequest(command);
+                        var msg = dataService.GameRequest(command);
                         await SendMessage(msg, channel);
                         break;
                     }
                 case "steam":
                 case "games":
                     {
-                        var msg = await this.steamService.GetGamePrices();
+                        var msg = await steamService.GetGamePrices();
                         await SendMessage($"{msg}", channel);
                         break;
                     }
@@ -131,7 +127,6 @@ namespace EdgeOfEmpireBot.Service
                         break;
                     }
             }
-
         }
 
         /// <summary>
@@ -140,31 +135,26 @@ namespace EdgeOfEmpireBot.Service
         /// <param name="command"></param>
         private async Task ProcessSimpleCommand(string command, ISocketMessageChannel channel)
         {
-            Console.WriteLine($"Command: {command}");
-            var filePath = Path.Combine(@"Data\BasicCommands.json");
             var msg = string.Empty;
-            var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
 
             try
             {
-                // Read the entire JSON file into a string
-                var jsonString = File.ReadAllText(filePath);
+                // Ensure command is case insensive
+                Console.WriteLine($"Command: {command}");
+                command = command.ToLower();
 
-                // Parse the JSON string into a JsonDocument
-                using JsonDocument doc = JsonDocument.Parse(jsonString);
+                var filePath = Path.Combine(@"Data\BasicCommands.json");
+                var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
 
-                // Get the "commands" property from the JSON document
-                if (doc.RootElement.TryGetProperty("commands", out JsonElement commands))
+                // Read the entire JSON file
+                var commands = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(filePath));
+
+                // Check if the specified command exists in the "commands" object
+                if (commands?.ContainsKey(command) == true)
                 {
-                    Console.WriteLine("command property exists.");
-
-                    // Check if the specified command exists in the "commands" object
-                    if (commands.TryGetProperty(command, out JsonElement commandResponse))
-                    {
-                        // If the command exists, return the corresponding response string
-                        Console.WriteLine("command exists.");
-                        msg = commandResponse.GetString();
-                    }
+                    // If the command exists, return the corresponding response string
+                    Console.WriteLine("command exists.");
+                    msg = commands[command];
                 }
 
                 // If message is still an empty string, set it to commandNotFoundMsg
@@ -173,7 +163,7 @@ namespace EdgeOfEmpireBot.Service
                 Console.WriteLine(msg);
                 await SendMessage(msg, channel);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 msg = "```[Statement] it appears the developer fucked up and broke something.\n[Observation] The error is\n" + ex.Message + "```";

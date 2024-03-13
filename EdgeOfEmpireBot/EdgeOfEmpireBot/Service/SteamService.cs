@@ -1,5 +1,7 @@
-﻿using EdgeOfEmpireBot.IService;
-using System.Text.Json;
+﻿using System.Text.Json;
+using EdgeOfEmpireBot.IService;
+using EdgeOfEmpireBot.Models;
+using Newtonsoft.Json;
 
 namespace EdgeOfEmpireBot.Service
 {
@@ -11,40 +13,35 @@ namespace EdgeOfEmpireBot.Service
         public async Task<string> GetGamePrices()
         {
             var filePath = Path.Combine(@"Data\games.json");
-            string json = await File.ReadAllTextAsync(filePath);
-            var games = JsonSerializer.Deserialize<JsonElement>(json);
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath));
             var steamToken = GetToken();
 
             var result = "";
             using var client = new HttpClient();
-            foreach (var game in games.GetProperty("Games").EnumerateArray())
+            foreach (var game in games!)
             {
-                var gameDetails = game.GetProperty(game.EnumerateObject().First().Name);
-                var appId = gameDetails.GetProperty("AppID").GetString().Trim();
-                var price = gameDetails.GetProperty("Price").GetString().Trim();
+                var response = await client.GetAsync($"https://store.steampowered.com/api/appdetails?appids={game.AppID}&cc=au&key={steamToken}");
 
-                var response = await client.GetAsync($"https://store.steampowered.com/api/appdetails?appids={appId}&cc=au&key={steamToken}");
-                if (response.IsSuccessStatusCode)
+                if (!response.IsSuccessStatusCode) { throw new Exception("Ooft failed to get success response from Steam"); }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var appDetails = JsonConvert.DeserializeObject<JsonElement>(responseJson);// [int.Parse(appId)];
+                var data = appDetails.GetProperty(game.AppID).GetProperty("data");
+                var priceOverview = data.GetProperty("price_overview");
+                var currentPrice = priceOverview.GetProperty("final_formatted").GetString();
+                var discountPercent = data.GetProperty("price_overview").GetProperty("discount_percent").GetInt32();
+                var discountedPrice = data.GetProperty("price_overview").GetProperty("final_formatted").GetString() ?? "";
+
+                if (!string.IsNullOrEmpty(currentPrice))
                 {
-                    var responseJson = await response.Content.ReadAsStringAsync();
-                    var appDetails = JsonSerializer.Deserialize<JsonElement>(responseJson);// [int.Parse(appId)];
-                    var data = appDetails.GetProperty(appId).GetProperty("data");
-                    var priceOverview = data.GetProperty("price_overview");
-                    var currentPrice = priceOverview.GetProperty("final_formatted").GetString();
-                    var discountPercent = data.GetProperty("price_overview").GetProperty("discount_percent").GetInt32();
-                    var discountedPrice = data.GetProperty("price_overview").GetProperty("final_formatted").GetString() ?? "";
+                    result += $"{game.Name} - {game.Price} ({currentPrice})";
 
-                    if (!string.IsNullOrEmpty(currentPrice))
+                    if (discountPercent > 0)
                     {
-                        result += $"{game.EnumerateObject().First().Name} - {price} ({currentPrice})";
-
-                        if (discountPercent > 0)
-                        {
-                            result += $" {discountPercent}% off, now {discountedPrice}";
-                        }
-
-                        result += "\n";
+                        result += $" {discountPercent}% off, now {discountedPrice}";
                     }
+
+                    result += "\n";
                 }
             }
 
@@ -55,7 +52,7 @@ namespace EdgeOfEmpireBot.Service
         /// Gets the Steam Token
         /// </summary>
         /// <returns>the token string</returns>
-        private string GetToken()
+        private static string GetToken()
         {
             var token = string.Empty;
 
@@ -72,4 +69,3 @@ namespace EdgeOfEmpireBot.Service
         }
     }
 }
-
