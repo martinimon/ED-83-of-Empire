@@ -31,7 +31,7 @@ namespace EdgeOfEmpireBot.Service
                 commands?.Add(commandLabel, commandText);
 
                 // Write the updated commands back to the JSON file
-                File.WriteAllText(filePath, JsonConvert.SerializeObject(commands));
+                File.WriteAllText(filePath, JsonConvert.SerializeObject(commands, Formatting.Indented));
 
                 return $"```[Statement]: .{commandLabel} command added to the list meatbag.```";
             }
@@ -69,7 +69,7 @@ namespace EdgeOfEmpireBot.Service
             games?.Add(newGame);
 
             // Write the updated JObject back to the JSON file
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(games));
+            File.WriteAllText(filePath, JsonConvert.SerializeObject(games, Formatting.Indented));
 
             var msg = $"```[Statement]: {newGame.Name} was added to the list.```";
             Console.WriteLine(msg);
