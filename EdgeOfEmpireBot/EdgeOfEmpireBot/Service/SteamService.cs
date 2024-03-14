@@ -12,7 +12,7 @@ namespace EdgeOfEmpireBot.Service
     {
         public async Task<string> GetGamePrices()
         {
-            var filePath = Path.Combine(@"Data\games.json");
+            var filePath = Path.Combine("Data/games.json");
             var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath));
             var steamToken = GetToken();
 
@@ -58,7 +58,7 @@ namespace EdgeOfEmpireBot.Service
 
             try
             {
-                string path = Path.Combine(@"Data\steamToken.txt");
+                string path = Path.Combine("Data/steamToken.txt");
                 token = File.ReadAllText(path);
             }
             catch (Exception ex)

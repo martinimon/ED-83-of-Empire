@@ -106,7 +106,7 @@ namespace EdgeOfEmpireBot.Service
                         break;
                     }
                 case "gamerequest":
-                case "gamesRequest":
+                case "gamesrequest":
                 case "gr":
                     {
                         var msg = dataService.GameRequest(command);
@@ -143,7 +143,7 @@ namespace EdgeOfEmpireBot.Service
                 Console.WriteLine($"Command: {command}");
                 command = command.ToLower();
 
-                var filePath = Path.Combine(@"Data\BasicCommands.json");
+                var filePath = Path.Combine("Data/BasicCommands.json");
                 var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
 
                 // Read the entire JSON file

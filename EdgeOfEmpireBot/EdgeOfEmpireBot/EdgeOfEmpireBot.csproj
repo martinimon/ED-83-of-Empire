@@ -8,35 +8,35 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="3.9.0" />
-    <PackageReference Include="Discord.Net.Rest" Version="3.9.0" />
+    <PackageReference Include="Discord.Net" Version="3.13.1" />
+    <PackageReference Include="Discord.Net.Rest" Version="3.13.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="RestSharp" Version="110.2.0" />
     <PackageReference Include="SteamWebAPI2" Version="4.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\games.json">
+    <None Update="Data/games.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\steamToken.template.txt">
+    <None Update="Data/steamToken.template.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\steamToken.txt">
+    <None Update="Data/steamToken.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\token.template.txt">
+    <None Update="Data/token.template.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\token.txt">
+    <None Update="Data/token.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-	  <None Update="Data\BasicCommands.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
-	  <None Update="Data\BasicCommands.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </None>
+    <None Update="Data/BasicCommands.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Data/BasicCommands.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

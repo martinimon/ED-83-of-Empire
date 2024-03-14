@@ -64,19 +64,19 @@ public class BotApp
     {
         var token = GetToken();
 
-        this.client.Log += Log;
+        client.Log += Log;
         /* TODO:
          * Woah we can do message Updated? Need to look into this once some more key functionality is completed.
          * Have turned off for the moment to prevent any potential issue occurring for the moment.
         */
         // this.client.MessageUpdated += MessageUpdated;
-        this.client.MessageReceived += MessageReceived;
+        client.MessageReceived += MessageReceived;
 
-        await this.client.LoginAsync(TokenType.Bot, token);
+        await client.LoginAsync(TokenType.Bot, token);
         //Starts the bot
-        await this.client.StartAsync();
+        await client.StartAsync();
 
-        this.client.Ready += () =>
+        client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
@@ -131,7 +131,7 @@ public class BotApp
 
         try
         {
-            string path = Path.Combine(@"Data\token.txt");
+            string path = Path.Combine(@"Data/token.txt");
             token = File.ReadAllText(path);
         }
         catch (Exception ex)

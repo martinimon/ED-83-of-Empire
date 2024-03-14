@@ -14,7 +14,7 @@ namespace EdgeOfEmpireBot.Service
         public string AddCommand(string command)
         {
             // Parse the existing JSON file into a JObject
-            var filePath = Path.Combine(@"Data\BasicCommands.json");
+            var filePath = Path.Combine("Data/BasicCommands.json");
             var commands = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(filePath));
 
             // Split the command string into parts and remove any surrounding quotes
