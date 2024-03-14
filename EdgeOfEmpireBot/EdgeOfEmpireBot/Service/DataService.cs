@@ -26,6 +26,7 @@ namespace EdgeOfEmpireBot.Service
                 var commandLabel = parts[1];
                 var commandText = parts[3];
 
+                commandLabel = commandLabel.ToLower();
                 commandText = ModifyCommandTextToBeHK47(commandText);
                 commands?.Add(commandLabel, commandText);
 
@@ -89,7 +90,7 @@ namespace EdgeOfEmpireBot.Service
             string[] subjects = { "meatbags", "organics", "biologicals", "fleshy beings" };
             string[] adjectives = { "pathetic", "inferior", "incompetent", "insignificant" };
             string[] verbs = { "destroy", "eliminate", "eradicate", "annihilate" };
-            string[] objects = { "all life forms", "inferior species", "sentient beings", "weaklings" };
+            string[] objects = { "life forms", "inferior species", "sentient beings", "weaklings" };
 
             // Generate a random sentence structure and sentence components
             var random = new Random();
