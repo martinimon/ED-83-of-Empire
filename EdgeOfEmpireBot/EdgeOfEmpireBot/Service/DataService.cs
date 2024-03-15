@@ -10,6 +10,12 @@ namespace EdgeOfEmpireBot.Service
     /// </summary>
     public class DataService : IDataService
     {
+        private readonly string gameFilePath;
+        public DataService()
+        {
+            gameFilePath = Path.Combine(@"Data\games.json");
+        }
+
         ///<inheritdoc/>
         public string AddCommand(string command)
         {
@@ -43,7 +49,7 @@ namespace EdgeOfEmpireBot.Service
         }
 
         /// <inheritdoc/>
-        public string GameRequest(string command)
+        public async Task<string> GameRequest(string command)
         {
             // "game|appID|Price" is the expected format.
             var commandClean = command.Split('|');
@@ -56,8 +62,6 @@ namespace EdgeOfEmpireBot.Service
             }
 
             // Parse the existing JSON file into a JObject
-            var filePath = Path.Combine(@"Data\games.json");
-            var games = JsonConvert.DeserializeObject<List<Game>>(File.ReadAllText(filePath));
             var newGame = new Game()
             {
                 Name = commandClean[1],
@@ -66,15 +70,28 @@ namespace EdgeOfEmpireBot.Service
             };
 
             // Add the new game information to the existing list of games
-            games?.Add(newGame);
-
-            // Write the updated JObject back to the JSON file
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(games, Formatting.Indented));
+            await WriteGameToFile(newGame);
 
             var msg = $"```[Statement]: {newGame.Name} was added to the list.```";
             Console.WriteLine(msg);
 
             return msg;
+        }
+
+        public async Task<string> GetGameByName(string name)
+        {
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
+            var game = games.Find(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase));
+            if (game == null) { return $"No game was found with the name {name}"; }
+
+            return $"Name: {game.Name}\nId:{game.AppID}\nPrice:{game.Price}";
+        }
+
+        public async Task WriteGameToFile(Game gameDetails)
+        {
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
+            games.Add(gameDetails);
+            await File.WriteAllTextAsync(gameFilePath, JsonConvert.SerializeObject(games, Formatting.Indented));
         }
 
         /// <summary>

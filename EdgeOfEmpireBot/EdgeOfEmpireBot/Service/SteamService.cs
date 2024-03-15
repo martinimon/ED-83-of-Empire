@@ -11,13 +11,11 @@ namespace EdgeOfEmpireBot.Service
     /// </summary>
     public class SteamService : ISteamService
     {
-        private readonly HttpClient client;
         private readonly SteamStore steamInterface;
         private readonly string filePath;
 
         public SteamService()
         {
-            client = new HttpClient();
             steamInterface = new SteamWebInterfaceFactory(GetToken()).CreateSteamStoreInterface();
             filePath = Path.Combine("Data/games.json");
         }
@@ -28,52 +26,46 @@ namespace EdgeOfEmpireBot.Service
             var result = "";
             foreach (var game in games)
             {
-                var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID));
-                var priceOverview = gameDetails.PriceOverview;
-                var currentPrice = priceOverview.InitialFormatted;
-                var discountPercent = priceOverview.DiscountPercent;
-                var discountedPrice = priceOverview.FinalFormatted;
-
-                if (!string.IsNullOrEmpty(currentPrice))
+                try
                 {
-                    result += $"{game.Name} - {game.Price} ({currentPrice})";
+                    var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID));
+                    var priceOverview = gameDetails.PriceOverview;
+                    var currentPrice = !string.IsNullOrEmpty(priceOverview.InitialFormatted) ? priceOverview.InitialFormatted : priceOverview.FinalFormatted;
+                    var discountPercent = priceOverview.DiscountPercent;
+                    var discountedPrice = priceOverview.FinalFormatted;
 
-                    if (discountPercent > 0)
+                    if (!string.IsNullOrEmpty(currentPrice))
                     {
-                        result += $" {discountPercent}% off, now {discountedPrice}";
-                    }
+                        result += $"{game.Name} - {game.Price} ({currentPrice})";
 
-                    result += "\n";
+                        if (discountPercent > 0)
+                        {
+                            result += $" {discountPercent}% off, now {discountedPrice}";
+                        }
+
+                        result += "\n";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result += $"\nCouldn't receive price for {game.Name} due to {ex.Message}";
                 }
             }
 
             return result;
         }
 
-        public async Task<string> GetGameByName(string name)
-        {
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
-            var game = games.Where(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-            if (game == null) { return $"No game was found with the name {name}"; }
-
-            return $"Name: {game.Name}\nId:{game.AppID}\nPrice:{game.Price}";
-        }
-
-        public async Task AddGameToList(string appId)
+        public async Task<Game> RetrieveGameFromSteam(string appId)
         {
             var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId));
 
             // The Game Model can be extended to have more information if we want it but this is good for now.
-            var gameDetails = new Game
+            return new Game
             {
                 AppID = appId,
                 Name = game.Name,
                 Price = game.PriceOverview.FinalFormatted
             };
-
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
-            games.Add(gameDetails);
-            await File.WriteAllTextAsync(filePath, JsonConvert.SerializeObject(games, Formatting.Indented));
         }
 
         /// <summary>

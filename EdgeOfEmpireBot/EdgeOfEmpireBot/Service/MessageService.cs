@@ -108,7 +108,7 @@ namespace EdgeOfEmpireBot.Service
                 case "gamesrequest":
                 case "gr":
                     {
-                        var msg = dataService.GameRequest(command);
+                        var msg = await dataService.GameRequest(command);
                         await SendMessage(msg, channel);
                         break;
                     }

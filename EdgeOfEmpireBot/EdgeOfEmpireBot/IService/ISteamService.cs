@@ -1,4 +1,6 @@
-﻿namespace EdgeOfEmpireBot.IService
+﻿using EdgeOfEmpireBot.Models;
+
+namespace EdgeOfEmpireBot.IService
 {
     /// <summary>
     /// The interface for the Steam service
@@ -6,7 +8,6 @@
     public interface ISteamService
     {
         Task<string> GetGamePrices();
-        Task<string> GetGameByName(string name);
-        Task AddGameToList(string appId);
+        Task<Game> RetrieveGameFromSteam(string appId);
     }
 }
