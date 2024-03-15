@@ -86,7 +86,8 @@ namespace EdgeOfEmpireBot.Service
             // Check if the command is a custom command that requires functionality, ie a roll.
             // If not a custom command try processing it as a simple command.
             // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
-            var commandNoParam = command.Split(' ').FirstOrDefault();
+            var commandParams = command.Split(' ');
+            var commandNoParam = commandParams[0];
             switch (commandNoParam?.ToLower())
             {
                 case "roll":
@@ -108,7 +109,10 @@ namespace EdgeOfEmpireBot.Service
                 case "gamesrequest":
                 case "gr":
                     {
-                        var msg = await dataService.GameRequest(command);
+                        var appId = commandParams[1];
+                        var game = await steamService.RetrieveGameFromSteam(appId);
+                        await dataService.WriteGameToFile(game);
+                        var msg = $"```[Statement]: {game.Name} was added to the list.```";
                         await SendMessage(msg, channel);
                         break;
                     }

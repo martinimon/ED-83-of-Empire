@@ -1,8 +1,8 @@
 [
   {
     "Name": "Portal 2",
-    "AppID": " 620",
-    "Price": " 14.50"
+    "AppID": "620",
+    "Price": "14.50"
   },
   {
     "Name": "Divinity 2",
@@ -10,8 +10,13 @@
     "Price": "64.95"
   },
   {
-    "Name": "Dark Souls",
-    "AppID": " 570940",
-    "Price": " 56.95"
+    "Name": "DARK SOULS™: REMASTERED",
+    "AppID": "570940",
+    "Price": "A$ 56.95"
+  },
+  {
+    "Name": "Palworld",
+    "AppID": "1623730",
+    "Price": "A$ 39.55"
   }
 ]

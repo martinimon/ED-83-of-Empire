@@ -62,9 +62,9 @@ namespace EdgeOfEmpireBot.Service
             // The Game Model can be extended to have more information if we want it but this is good for now.
             return new Game
             {
-                AppID = appId,
-                Name = game.Name,
-                Price = game.PriceOverview.FinalFormatted
+                AppID = appId.Trim(),
+                Name = game.Name.Trim(),
+                Price = game.PriceOverview.FinalFormatted.Trim()
             };
         }
 

@@ -15,11 +15,6 @@ public interface IDataService
     /// </summary>
     string AddCommand(string command);
 
-    /// <summary>
-    /// Saves a requested game to the games.json file.
-    /// </summary>
-    Task<string> GameRequest(string command);
-
     /// <summary>Gets the game details from local storage</summary>
     Task<string> GetGameByName(string name);
 

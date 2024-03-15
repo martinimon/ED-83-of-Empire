@@ -1,5 +1,4 @@
-﻿using Discord.WebSocket;
-using EdgeOfEmpireBot.IService;
+﻿using EdgeOfEmpireBot.IService;
 using EdgeOfEmpireBot.Models;
 using Newtonsoft.Json;
 
@@ -13,7 +12,7 @@ namespace EdgeOfEmpireBot.Service
         private readonly string gameFilePath;
         public DataService()
         {
-            gameFilePath = Path.Combine(@"Data\games.json");
+            gameFilePath = Path.Combine("Data/games.json");
         }
 
         ///<inheritdoc/>
@@ -48,36 +47,6 @@ namespace EdgeOfEmpireBot.Service
             }
         }
 
-        /// <inheritdoc/>
-        public async Task<string> GameRequest(string command)
-        {
-            // "game|appID|Price" is the expected format.
-            var commandClean = command.Split('|');
-
-            if (commandClean.Length != 4)
-            {
-                const string message = "[Observation]: This is not in the correct format.\n[Mockery]: If you Meatbag are capable of processing it, try in the following format.\n```.gameRequest |GameName|GameID|GamePrice```";
-                Console.WriteLine(message);
-                return message;
-            }
-
-            // Parse the existing JSON file into a JObject
-            var newGame = new Game()
-            {
-                Name = commandClean[1],
-                AppID = commandClean[2],
-                Price = commandClean[3]
-            };
-
-            // Add the new game information to the existing list of games
-            await WriteGameToFile(newGame);
-
-            var msg = $"```[Statement]: {newGame.Name} was added to the list.```";
-            Console.WriteLine(msg);
-
-            return msg;
-        }
-
         public async Task<string> GetGameByName(string name)
         {
             var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
@@ -90,6 +59,10 @@ namespace EdgeOfEmpireBot.Service
         public async Task WriteGameToFile(Game gameDetails)
         {
             var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
+            var matchingGame = games.Find(game => game.AppID == gameDetails.AppID);
+
+            if(matchingGame != null) { games.Remove(matchingGame); } // Prevents Duplicates
+
             games.Add(gameDetails);
             await File.WriteAllTextAsync(gameFilePath, JsonConvert.SerializeObject(games, Formatting.Indented));
         }
