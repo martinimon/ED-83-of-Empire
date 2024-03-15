@@ -17,7 +17,7 @@ namespace EdgeOfEmpireBot.Service
         public SteamService()
         {
             steamInterface = new SteamWebInterfaceFactory(GetToken()).CreateSteamStoreInterface();
-            filePath = Path.Combine("Data/games.json");
+            filePath = Path.Combine("Data/Games.json");
         }
 
         public async Task<(string Message, List<Game> GamesWithNewPrice)> GetGamePrices()

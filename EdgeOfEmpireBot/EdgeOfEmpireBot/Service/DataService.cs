@@ -12,7 +12,7 @@ namespace EdgeOfEmpireBot.Service
         private readonly string gameFilePath;
         public DataService()
         {
-            gameFilePath = Path.Combine("Data/games.json");
+            gameFilePath = Path.Combine("Data/Games.json");
         }
 
         ///<inheritdoc/>
