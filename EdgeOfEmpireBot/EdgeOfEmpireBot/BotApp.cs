@@ -49,7 +49,6 @@ public class BotApp
         var collection = new ServiceCollection();
 
         collection.AddSingleton(discordConfig).AddSingleton<DiscordSocketClient>();
-
         collection.AddScoped<IMessageService, MessageService>();
         collection.AddScoped<IDataService, DataService>();
         collection.AddScoped<ISteamService, SteamService>();
@@ -131,7 +130,7 @@ public class BotApp
 
         try
         {
-            string path = Path.Combine(@"Data/token.txt");
+            string path = Path.Combine("Data/token.txt");
             token = File.ReadAllText(path);
         }
         catch (Exception ex)

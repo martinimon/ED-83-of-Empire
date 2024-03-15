@@ -9,7 +9,6 @@ namespace EdgeOfEmpireBot.Service
     {
         private readonly IDataService dataService;
         private readonly ISteamService steamService;
-
         private bool messageIsSafe = false;
 
         /// <summary>

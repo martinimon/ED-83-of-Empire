@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
-using EdgeOfEmpireBot.IService;
+﻿using EdgeOfEmpireBot.IService;
 using EdgeOfEmpireBot.Models;
 using Newtonsoft.Json;
+using SteamWebAPI2.Interfaces;
+using SteamWebAPI2.Utilities;
 
 namespace EdgeOfEmpireBot.Service
 {
@@ -10,27 +11,28 @@ namespace EdgeOfEmpireBot.Service
     /// </summary>
     public class SteamService : ISteamService
     {
+        private readonly HttpClient client;
+        private readonly SteamStore steamInterface;
+        private readonly string filePath;
+
+        public SteamService()
+        {
+            client = new HttpClient();
+            steamInterface = new SteamWebInterfaceFactory(GetToken()).CreateSteamStoreInterface();
+            filePath = Path.Combine("Data/games.json");
+        }
+
         public async Task<string> GetGamePrices()
         {
-            var filePath = Path.Combine("Data/games.json");
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath));
-            var steamToken = GetToken();
-
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
             var result = "";
-            using var client = new HttpClient();
-            foreach (var game in games!)
+            foreach (var game in games)
             {
-                var response = await client.GetAsync($"https://store.steampowered.com/api/appdetails?appids={game.AppID}&cc=au&key={steamToken}");
-
-                if (!response.IsSuccessStatusCode) { throw new Exception("Ooft failed to get success response from Steam"); }
-
-                var responseJson = await response.Content.ReadAsStringAsync();
-                var appDetails = JsonConvert.DeserializeObject<JsonElement>(responseJson);// [int.Parse(appId)];
-                var data = appDetails.GetProperty(game.AppID).GetProperty("data");
-                var priceOverview = data.GetProperty("price_overview");
-                var currentPrice = priceOverview.GetProperty("final_formatted").GetString();
-                var discountPercent = data.GetProperty("price_overview").GetProperty("discount_percent").GetInt32();
-                var discountedPrice = data.GetProperty("price_overview").GetProperty("final_formatted").GetString() ?? "";
+                var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID));
+                var priceOverview = gameDetails.PriceOverview;
+                var currentPrice = priceOverview.InitialFormatted;
+                var discountPercent = priceOverview.DiscountPercent;
+                var discountedPrice = priceOverview.FinalFormatted;
 
                 if (!string.IsNullOrEmpty(currentPrice))
                 {
@@ -46,6 +48,32 @@ namespace EdgeOfEmpireBot.Service
             }
 
             return result;
+        }
+
+        public async Task<string> GetGameByName(string name)
+        {
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
+            var game = games.Where(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+            if (game == null) { return $"No game was found with the name {name}"; }
+
+            return $"Name: {game.Name}\nId:{game.AppID}\nPrice:{game.Price}";
+        }
+
+        public async Task AddGameToList(string appId)
+        {
+            var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId));
+
+            // The Game Model can be extended to have more information if we want it but this is good for now.
+            var gameDetails = new Game
+            {
+                AppID = appId,
+                Name = game.Name,
+                Price = game.PriceOverview.FinalFormatted
+            };
+
+            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
+            games.Add(gameDetails);
+            await File.WriteAllTextAsync(filePath, JsonConvert.SerializeObject(games, Formatting.Indented));
         }
 
         /// <summary>

@@ -6,5 +6,7 @@
     public interface ISteamService
     {
         Task<string> GetGamePrices();
+        Task<string> GetGameByName(string name);
+        Task AddGameToList(string appId);
     }
 }
