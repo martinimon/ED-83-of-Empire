@@ -20,20 +20,26 @@ namespace EdgeOfEmpireBot.Service
             filePath = Path.Combine("Data/games.json");
         }
 
-        public async Task<string> GetGamePrices()
+        public async Task<(string Message, List<Game> GamesWithNewPrice)> GetGamePrices()
         {
             var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
+            var updatedGames = new List<Game>();
             var result = "";
             foreach (var game in games)
             {
                 try
                 {
-                    var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID));
+                    var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID), "AU");
                     var priceOverview = gameDetails.PriceOverview;
                     var currentPrice = !string.IsNullOrEmpty(priceOverview.InitialFormatted) ? priceOverview.InitialFormatted : priceOverview.FinalFormatted;
                     var discountPercent = priceOverview.DiscountPercent;
                     var discountedPrice = priceOverview.FinalFormatted;
-
+                    if (!string.Equals(game.Price, priceOverview.InitialFormatted))
+                    {
+                        game.Name = gameDetails.Name;
+                        game.Price = priceOverview.InitialFormatted;
+                        updatedGames.Add(game);
+                    };
                     if (!string.IsNullOrEmpty(currentPrice))
                     {
                         result += $"{game.Name} - {game.Price} ({currentPrice})";
@@ -52,12 +58,12 @@ namespace EdgeOfEmpireBot.Service
                 }
             }
 
-            return result;
+            return (result, updatedGames);
         }
 
         public async Task<Game> RetrieveGameFromSteam(string appId)
         {
-            var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId));
+            var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId), "AU");
 
             // The Game Model can be extended to have more information if we want it but this is good for now.
             return new Game

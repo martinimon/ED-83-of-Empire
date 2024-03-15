@@ -119,7 +119,8 @@ namespace EdgeOfEmpireBot.Service
                 case "steam":
                 case "games":
                     {
-                        var msg = await steamService.GetGamePrices();
+                        var (msg, updatedGames) = await steamService.GetGamePrices();
+                        if (updatedGames.Count != 0) { await dataService.UpdateGames(updatedGames); }
                         await SendMessage($"{msg}", channel);
                         break;
                     }

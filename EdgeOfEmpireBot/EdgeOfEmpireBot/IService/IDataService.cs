@@ -18,6 +18,8 @@ public interface IDataService
     /// <summary>Gets the game details from local storage</summary>
     Task<string> GetGameByName(string name);
 
+    Task UpdateGames(List<Game> UpdatedGames);
+
     /// <summary>Gets the game details from local storage</summary>
     Task WriteGameToFile(Game gameDetails);
 }

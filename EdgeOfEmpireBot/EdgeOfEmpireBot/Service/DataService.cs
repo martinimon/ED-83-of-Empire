@@ -56,6 +56,16 @@ namespace EdgeOfEmpireBot.Service
             return $"Name: {game.Name}\nId:{game.AppID}\nPrice:{game.Price}";
         }
 
+        public async Task UpdateGames(List<Game> UpdatedGames)
+        {
+            foreach (var game in UpdatedGames)
+            {
+                // Since this overwrites the older version of the game
+                // We can leverage it here to update the game with the new values
+                await WriteGameToFile(game);
+            }
+        }
+
         public async Task WriteGameToFile(Game gameDetails)
         {
             var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
