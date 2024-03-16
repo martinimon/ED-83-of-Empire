@@ -7,7 +7,7 @@ namespace EdgeOfEmpireBot.IService
     /// </summary>
     public interface ISteamService
     {
-        Task<(string Message, List<Game> GamesWithNewPrice)> GetGamePrices();
-        Task<Game> RetrieveGameFromSteam(string appId);
+        Task<(string Message, List<SteamGameDetails> GamesWithNewPrice)> GetGamePrices();
+        Task<SteamGameDetails> RetrieveGameFromSteam(string appId);
     }
 }

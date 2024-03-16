@@ -18,8 +18,9 @@ public interface IDataService
     /// <summary>Gets the game details from local storage</summary>
     Task<string> GetGameByName(string name);
 
-    Task UpdateGames(List<Game> UpdatedGames);
+    /// <summary>Iterates through the provide list of details and updates them in the file</summary>
+    Task UpdateGames(List<SteamGameDetails> UpdatedGames);
 
     /// <summary>Gets the game details from local storage</summary>
-    Task WriteGameToFile(Game gameDetails);
+    Task WriteGameToFile(SteamGameDetails gameDetails);
 }
