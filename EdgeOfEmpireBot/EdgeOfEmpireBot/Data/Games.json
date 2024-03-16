@@ -1,0 +1,32 @@
+[
+  {
+    "Name": "Portal 2",
+    "AppID": "620",
+    "Price": "A$ 14.50"
+  },
+  {
+    "Name": "Divinity 2",
+    "AppID": "435150",
+    "Price": "A$ 64.95"
+  },
+  {
+    "Name": "DARK SOULS™: REMASTERED",
+    "AppID": "570940",
+    "Price": ""
+  },
+  {
+    "Name": "Palworld",
+    "AppID": "1623730",
+    "Price": "A$ 43.95"
+  },
+  {
+    "Name": "HELLDIVERS™ 2",
+    "AppID": "553850",
+    "Price": ""
+  },
+  {
+    "Name": "Baldur's Gate 3",
+    "AppID": "1086940",
+    "Price": "A$ 89.95"
+  }
+]

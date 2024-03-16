@@ -1,6 +1,6 @@
 {
-  "commands": {
-    "help": "Here are some available commands: [list commands] oh wait this isn't written yet. ignore that.'",
-    "test": "[Statement]This is a test response to your test message.\n[Sarcasm] You must feel so clever, give yourself a pat on the back."
-  }
+  "help": "Here are some available commands: [list commands] oh wait this isn't written yet. ignore that.'",
+  "test": "[Statement]This is a test response to your test message.\n[Sarcasm] You must feel so clever, give yourself a pat on the back.",
+  "addtest": "Biologicals are inferior. eradicate the all life forms! Mr Swags Declarative. ",
+  "command": "Fleshy beings are pathetic. destroy the sentient beings! Drip Money Power Interrogative? "
 }

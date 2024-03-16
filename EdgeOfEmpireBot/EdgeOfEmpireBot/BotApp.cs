@@ -4,12 +4,13 @@ using Microsoft.Extensions.DependencyInjection;
 using EdgeOfEmpireBot.Service;
 using EdgeOfEmpireBot.IService;
 
+namespace EdgeOfEmpireBot.Api;
+
 public class BotApp
 {
     private readonly IServiceProvider serviceProvider;
     private readonly DiscordSocketClient client;
     private readonly IMessageService messageService;
-    private readonly IProcessMessageService processMessageService;
 
     /// <summary>
     /// The bot itself.
@@ -19,16 +20,14 @@ public class BotApp
         serviceProvider = CreateProvider();
         this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
         this.messageService = serviceProvider.GetRequiredService<IMessageService>();
-        this.processMessageService = serviceProvider.GetRequiredService<IProcessMessageService>();
     }
 
-
-    static void Main(string[] args) => new BotApp().MainAsync(args).GetAwaiter().GetResult();
+    static void Main() => new BotApp().MainAsync().GetAwaiter().GetResult();
 
     /// <summary>
     /// The main function that starts the bot.
     /// </summary>
-    public async Task MainAsync(string[] args)
+    public async Task MainAsync()
     {
         await InitializeBot();
         await VerifyBotIsConnected();
@@ -38,9 +37,9 @@ public class BotApp
     }
 
     /// <summary>
-    /// Configures and registers services. 
+    /// Configures and registers services.
     /// </summary>
-    private IServiceProvider CreateProvider()
+    private static IServiceProvider CreateProvider()
     {
         var discordConfig = new DiscordSocketConfig
         {
@@ -50,9 +49,9 @@ public class BotApp
         var collection = new ServiceCollection();
 
         collection.AddSingleton(discordConfig).AddSingleton<DiscordSocketClient>();
-        
         collection.AddScoped<IMessageService, MessageService>();
-        collection.AddScoped<IProcessMessageService, ProcessMessageService>();
+        collection.AddScoped<IDataService, DataService>();
+        collection.AddScoped<ISteamService, SteamService>();
 
         return collection.BuildServiceProvider();
     }
@@ -64,19 +63,19 @@ public class BotApp
     {
         var token = GetToken();
 
-        this.client.Log += Log;
-        /* TODO: 
+        client.Log += Log;
+        /* TODO:
          * Woah we can do message Updated? Need to look into this once some more key functionality is completed.
-         * Have turned off for the moment to prevent any potential issue occurring for the moment. 
+         * Have turned off for the moment to prevent any potential issue occurring for the moment.
         */
-        //this.client.MessageUpdated += MessageUpdated;
-        this.client.MessageReceived += MessageReceived;
+        // this.client.MessageUpdated += MessageUpdated;
+        client.MessageReceived += MessageReceived;
 
-        await this.client.LoginAsync(TokenType.Bot, token);
+        await client.LoginAsync(TokenType.Bot, token);
         //Starts the bot
-        await this.client.StartAsync();
+        await client.StartAsync();
 
-        this.client.Ready += () =>
+        client.Ready += () =>
         {
             Console.WriteLine("Bot is connected!");
             return Task.CompletedTask;
@@ -84,7 +83,7 @@ public class BotApp
     }
 
     /// <summary>
-    /// Logs a user message the Bot can read to Discord. 
+    /// Logs a user message the Bot can read to Discord.
     /// </summary>
     /// <param name="msg"></param>
     //private Task MessageReceived(SocketMessage msg)
@@ -98,12 +97,12 @@ public class BotApp
     /// </summary>
     private async Task VerifyBotIsConnected()
     {
-        // TODO: Consider replacing this to data. 
-        var channelId = 1062707370809098291;
+        // TODO: Consider replacing this to data.
+        const long channelId = 1062707370809098291;
 
         /// !! URGENT DO NOT REMOVE !!
         /// SENDS VERY IMPORTANT START UP MESSAGE
-        var channel = await this.client.GetChannelAsync((ulong)channelId) as IMessageChannel;
+        var channel = await client.GetChannelAsync(channelId) as IMessageChannel;
         await channel!.SendMessageAsync("ScurvyDog");
     }
 
@@ -114,7 +113,7 @@ public class BotApp
     /// <param name="after"></param>
     /// <param name="channel"></param>
     /// <returns>Task</returns>
-    private async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
+    private static async Task MessageUpdated(Cacheable<IMessage, ulong> before, SocketMessage after, ISocketMessageChannel channel)
     {
         // If the message was not in the cache, downloading it will result in getting a copy of `after`.
         var message = await before.GetOrDownloadAsync();
@@ -125,17 +124,17 @@ public class BotApp
     /// Gets the Discord Token
     /// </summary>
     /// <returns>the token string</returns>
-    private string GetToken()
+    private static string GetToken()
     {
         var token = string.Empty;
 
         try
         {
-            string path = Path.Combine(@"Data\token.txt");
+            string path = Path.Combine("Data/token.txt");
             token = File.ReadAllText(path);
         }
-        catch (Exception ex) 
-        { 
+        catch (Exception ex)
+        {
             Console.WriteLine(ex.ToString());
         }
         return token;

@@ -1,19 +1,33 @@
-﻿using Discord.WebSocket;
+﻿using System.Text.Json;
+using Discord.WebSocket;
 using EdgeOfEmpireBot.IService;
-using Newtonsoft.Json.Linq;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace EdgeOfEmpireBot.Service
 {
     public class MessageService : IMessageService
     {
+        private readonly IDataService dataService;
+        private readonly ISteamService steamService;
         private bool messageIsSafe = false;
+
+        /// <summary>
+        /// The message service.
+        /// </summary>
+        /// <param name="dataService">The data service.</param>
+        /// <param name="steamService">The Steam service</param>
+        public MessageService(IDataService dataService,
+            ISteamService steamService)
+        {
+            this.dataService = dataService;
+            this.steamService = steamService;
+        }
 
         /// <inheritdoc/>
         public async Task SendMessage(string messageResponse, ISocketMessageChannel messageResponseChannel)
         {
-            var message = string.Empty;
-  
+            string message;
+
             // Discord API prevents messages greater than 2000 characters from sending.
             if (messageResponse.Length > 2000)
             {
@@ -26,7 +40,6 @@ namespace EdgeOfEmpireBot.Service
             }
 
             await messageResponseChannel!.SendMessageAsync(message);
-
         }
 
         /// <inheritdoc/>
@@ -43,7 +56,7 @@ namespace EdgeOfEmpireBot.Service
                     return;
                 }
 
-                // Removes the '.' prefix to indicate a bot command. 
+                // Removes the '.' prefix to indicate a bot command.
                 var messageCommand = message.Content.Remove(0, 1);
                 var messageChannel = message.Channel;
 
@@ -58,7 +71,6 @@ namespace EdgeOfEmpireBot.Service
             }
         }
 
-
         ///<inheritdoc/>
         public bool MessageIsSafe()
         {
@@ -71,25 +83,45 @@ namespace EdgeOfEmpireBot.Service
         /// <param name="command"></param>
         private async Task ProcessCommand(string command, ISocketMessageChannel channel)
         {
-            // Check if the command is a custom command that requires functionality, ie a roll. 
-            // If not a custom command try processing it as a simple command. 
-            // TODO: Consider the order of this once the scope of overall commands have been established. For efficency. 
-            var commandNoParam = command.Split(' ').FirstOrDefault();
-            switch (commandNoParam)
+            // Check if the command is a custom command that requires functionality, ie a roll.
+            // If not a custom command try processing it as a simple command.
+            // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
+            var commandParams = command.Split(' ');
+            var commandNoParam = commandParams[0];
+            switch (commandNoParam?.ToLower())
             {
-
                 case "roll":
                     {
                         // TODO:
                         //RollCommand()
-                        var msg = "```[Statement]: Roll command is not ready yet so I need you to calm down and either wait or implement it yourself Meatbag!```";
+                        const string msg = "```[Statement]: Roll command is not ready yet so I need you to calm down and either wait or implement it yourself Meatbag!```";
                         Console.WriteLine(msg);
                         await SendMessage(msg, channel);
                         break;
                     }
                 case "add":
                     {
-                        AddCommand(command,channel);
+                        var msg = dataService.AddCommand(command);
+                        await SendMessage(msg, channel);
+                        break;
+                    }
+                case "gamerequest":
+                case "gamesrequest":
+                case "gr":
+                    {
+                        var appId = commandParams[1];
+                        var game = await steamService.RetrieveGameFromSteam(appId);
+                        await dataService.WriteGameToFile(game);
+                        var msg = $"```[Statement]: {game.Name} was added to the list.```";
+                        await SendMessage(msg, channel);
+                        break;
+                    }
+                case "steam":
+                case "games":
+                    {
+                        var (msg, updatedGames) = await steamService.GetGamePrices();
+                        if (updatedGames.Count != 0) { await dataService.UpdateGames(updatedGames); }
+                        await SendMessage($"{msg}", channel);
                         break;
                     }
                 default:
@@ -99,7 +131,6 @@ namespace EdgeOfEmpireBot.Service
                         break;
                     }
             }
-
         }
 
         /// <summary>
@@ -108,31 +139,26 @@ namespace EdgeOfEmpireBot.Service
         /// <param name="command"></param>
         private async Task ProcessSimpleCommand(string command, ISocketMessageChannel channel)
         {
-            Console.WriteLine($"Command: {command}");
-            var filePath = Path.Combine(@"Data\BasicCommands.json");
             var msg = string.Empty;
-            var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
 
             try
             {
-                // Read the entire JSON file into a string
-                var jsonString = File.ReadAllText(filePath);
+                // Ensure command is case insensive
+                Console.WriteLine($"Command: {command}");
+                command = command.ToLower();
 
-                // Parse the JSON string into a JsonDocument
-                using JsonDocument doc = JsonDocument.Parse(jsonString);
+                var filePath = Path.Combine("Data/BasicCommands.json");
+                var commandNotFoundMsg = "```[Statement]: " + command + " command does not exist or is not implemented. Please speak to your local dev about " + command + " command toady! \n[Sarcasm:] You could try the same command again and see if it works now.```";
 
-                // Get the "commands" property from the JSON document
-                if (doc.RootElement.TryGetProperty("commands", out JsonElement commands))
+                // Read the entire JSON file
+                var commands = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(filePath));
+
+                // Check if the specified command exists in the "commands" object
+                if (commands?.ContainsKey(command) == true)
                 {
-                    Console.WriteLine("command property exists.");
-
-                    // Check if the specified command exists in the "commands" object
-                    if (commands.TryGetProperty(command, out JsonElement commandResponse))
-                    {
-                        // If the command exists, return the corresponding response string
-                        Console.WriteLine("command exists.");
-                        msg = commandResponse.GetString();
-                    }
+                    // If the command exists, return the corresponding response string
+                    Console.WriteLine("command exists.");
+                    msg = commands[command];
                 }
 
                 // If message is still an empty string, set it to commandNotFoundMsg
@@ -141,90 +167,12 @@ namespace EdgeOfEmpireBot.Service
                 Console.WriteLine(msg);
                 await SendMessage(msg, channel);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 msg = "```[Statement] it appears the developer fucked up and broke something.\n[Observation] The error is\n" + ex.Message + "```";
                 await SendMessage(msg, channel);
             }
-        }
-
-        /// <summary>
-        /// Allows commands to be added to the basic command list
-        /// <remarks>
-        /// The command format should be in the form .add "commandName" "CommandText"
-        /// </remarks>
-        /// </summary>
-        /// <param name="command"></param>
-        /// <param name="channel"></param>
-        private async void AddCommand(string command, ISocketMessageChannel channel)
-        {
-            // Parse the existing JSON file into a JObject
-            var filePath = Path.Combine(@"Data\BasicCommands.json");
-            JObject jsonObj = JObject.Parse(File.ReadAllText(filePath));
-
-            // Split the command string into parts and remove any surrounding quotes
-            string[] parts = command.Split('"', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 4 && parts[0].Trim() == "add")
-            {
-                //TODO Come up with a better method to ensure command is less than 1992 characters.
-                //and is in the format .add "commandName" "commandText".
-                string commandLabel = parts[1];
-                string commandText = parts[3];
-
-                commandText = ModifyCommandTextToBeHK47(commandText);
-
-                // Update the JObject with the new command
-                jsonObj["commands"][commandLabel] = commandText;
-
-                // Write the updated JObject back to the JSON file
-                File.WriteAllText(filePath, jsonObj.ToString());
-
-                var msg = "```[Statement]: ." + commandLabel + " command added to the list meatbag.```";
-
-                await SendMessage(msg,channel);
-            }
-            else
-            {
-                Console.WriteLine("Invalid command format.");
-                var msg = "[Statement]: It appears you have messed up the command format.\n[Theory]: Try it in the form\n.```add \"CommandLabel\" \"Command content\"```";
-                await SendMessage(msg, channel);
-            }
-        }
-
-        /// <summary>
-        /// converts a string to a badly written version as if it was said by HK-47.
-        /// </summary>
-        /// <param name="commandText"></param>
-        /// <returns>A string badly formatted as if it was from HK-47</returns>
-        private string ModifyCommandTextToBeHK47(string commandText)
-        {
-            string[] sentenceStructures = { "Exclamation! ", "Interrogative? ", "Imperative. ", "Declarative. " };
-
-            // Define arrays of potential sentence components
-            string[] subjects = { "meatbags", "organics", "biologicals", "fleshy beings" };
-            string[] adjectives = { "pathetic", "inferior", "incompetent", "insignificant" };
-            string[] verbs = { "destroy", "eliminate", "eradicate", "annihilate" };
-            string[] objects = { "all life forms", "inferior species", "sentient beings", "weaklings" };
-
-            // Generate a random sentence structure and sentence components
-            Random random = new Random();
-            var sentenceStructure = sentenceStructures[random.Next(sentenceStructures.Length)];
-            var subject = subjects[random.Next(subjects.Length)];
-            var adjective = adjectives[random.Next(adjectives.Length)];
-            var verb = verbs[random.Next(verbs.Length)];
-            var obj = objects[random.Next(objects.Length)];
-
-            // Combine the sentence components into a single sentence
-            var sentence = subject + " are " + adjective + ". " + verb + " the " + obj + "!";
-
-            // Capitalize the first letter of the sentence
-            sentence = char.ToUpper(sentence[0]) + sentence.Substring(1);
-
-            // Combine the sentence with the input text and the sentence structure
-            var outputText = sentence + " " + commandText.Trim() + " " + sentenceStructure;
-
-            return outputText;
         }
     }
 }

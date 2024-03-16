@@ -1,9 +1,9 @@
-﻿using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Discord.WebSocket;
 
 namespace EdgeOfEmpireBot.IService
 {
@@ -15,9 +15,8 @@ namespace EdgeOfEmpireBot.IService
         Task SendMessage(string messageResponse, ISocketMessageChannel messageResponseChannel);
 
         /// <summary>
-        /// Processes a message. 
+        /// Processes a message.
         /// </summary>
-        /// <param name="message"></param>
         Task ProcessMessage(SocketMessage message);
 
         /// <summary>
