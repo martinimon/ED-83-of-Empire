@@ -33,4 +33,8 @@ public interface IDataService
     /// </summary>
     /// <param name="gameDetails">The game details that you want to add</param>
     Task WriteGameToFile(SteamGameDetails gameDetails);
+
+    Task AddRememberPhraseToFile(string phrase);
+
+    Task<string> GetRememberWhenPhraseFromFile();
 }
