@@ -1,6 +1,6 @@
 namespace EdgeOfEmpireBot.Models;
 
-public class Game
+public class SteamGameDetails
 {
     public required string Name { get; set; }
 

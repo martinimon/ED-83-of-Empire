@@ -20,10 +20,10 @@ namespace EdgeOfEmpireBot.Service
             filePath = Path.Combine("Data/Games.json");
         }
 
-        public async Task<(string Message, List<Game> GamesWithNewPrice)> GetGamePrices()
+        public async Task<(string Message, List<SteamGameDetails> GamesWithNewPrice)> GetGamePrices()
         {
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(filePath)) ?? new List<Game>();
-            var updatedGames = new List<Game>();
+            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(filePath)) ?? new List<SteamGameDetails>();
+            var updatedGames = new List<SteamGameDetails>();
             var result = "";
             foreach (var game in games)
             {
@@ -61,12 +61,12 @@ namespace EdgeOfEmpireBot.Service
             return (result, updatedGames);
         }
 
-        public async Task<Game> RetrieveGameFromSteam(string appId)
+        public async Task<SteamGameDetails> RetrieveGameFromSteam(string appId)
         {
             var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId), "AU");
 
-            // The Game Model can be extended to have more information if we want it but this is good for now.
-            return new Game
+            // The SteamGameDetails Model can be extended to have more information if we want it but this is good for now.
+            return new SteamGameDetails
             {
                 AppID = appId.Trim(),
                 Name = game.Name.Trim(),

@@ -47,16 +47,18 @@ namespace EdgeOfEmpireBot.Service
             }
         }
 
+        ///<inheritdoc/>
         public async Task<string> GetGameByName(string name)
         {
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
+            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<SteamGameDetails>();
             var game = games.Find(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase));
             if (game == null) { return $"No game was found with the name {name}"; }
 
             return $"Name: {game.Name}\nId:{game.AppID}\nPrice:{game.Price}";
         }
 
-        public async Task UpdateGames(List<Game> UpdatedGames)
+        ///<inheritdoc/>
+        public async Task UpdateGames(List<SteamGameDetails> UpdatedGames)
         {
             foreach (var game in UpdatedGames)
             {
@@ -66,9 +68,10 @@ namespace EdgeOfEmpireBot.Service
             }
         }
 
-        public async Task WriteGameToFile(Game gameDetails)
+        ///<inheritdoc/>
+        public async Task WriteGameToFile(SteamGameDetails gameDetails)
         {
-            var games = JsonConvert.DeserializeObject<List<Game>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<Game>();
+            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<SteamGameDetails>();
             var matchingGame = games.Find(game => game.AppID == gameDetails.AppID);
 
             if(matchingGame != null) { games.Remove(matchingGame); } // Prevents Duplicates
