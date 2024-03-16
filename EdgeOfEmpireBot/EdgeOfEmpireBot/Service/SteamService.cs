@@ -20,11 +20,18 @@ namespace EdgeOfEmpireBot.Service
             filePath = Path.Combine("Data/Games.json");
         }
 
+        /// <summary>
+        /// Iterates through the list of games stored and queries the steam api
+        /// to get the prices for the games
+        /// </summary>
+        /// <returns>This will return the Details in the form of a string.
+        /// If there is any changes to the prices of the games stored we will return
+        /// a list of games that need to be updated</returns>
         public async Task<(string Message, List<SteamGameDetails> GamesWithNewPrice)> GetGamePrices()
         {
             var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(filePath)) ?? new List<SteamGameDetails>();
             var updatedGames = new List<SteamGameDetails>();
-            var result = "";
+            var result = string.Empty;
             foreach (var game in games)
             {
                 try
@@ -61,6 +68,11 @@ namespace EdgeOfEmpireBot.Service
             return (result, updatedGames);
         }
 
+        /// <summary>
+        /// Uses the Steam API to retrieve a game with the appId
+        /// </summary>
+        /// <param name="appId">App Id of the game you wish to retrieve</param>
+        /// <returns>Returns a transformed version of the result</returns>
         public async Task<SteamGameDetails> RetrieveGameFromSteam(string appId)
         {
             var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId), "AU");
