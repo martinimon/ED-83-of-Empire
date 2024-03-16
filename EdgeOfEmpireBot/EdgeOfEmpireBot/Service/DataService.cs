@@ -50,7 +50,7 @@ namespace EdgeOfEmpireBot.Service
         ///<inheritdoc/>
         public async Task<string> GetGameByName(string name)
         {
-            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<SteamGameDetails>();
+            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? [];
             var game = games.Find(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase));
             if (game == null) { return $"No game was found with the name {name}"; }
 

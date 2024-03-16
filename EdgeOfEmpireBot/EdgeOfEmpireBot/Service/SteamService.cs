@@ -24,7 +24,7 @@ namespace EdgeOfEmpireBot.Service
         {
             var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(filePath)) ?? new List<SteamGameDetails>();
             var updatedGames = new List<SteamGameDetails>();
-            var result = "";
+            var result = string.Empty;
             foreach (var game in games)
             {
                 try
