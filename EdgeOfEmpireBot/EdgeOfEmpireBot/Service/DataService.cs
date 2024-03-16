@@ -71,7 +71,7 @@ namespace EdgeOfEmpireBot.Service
         ///<inheritdoc/>
         public async Task WriteGameToFile(SteamGameDetails gameDetails)
         {
-            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? new List<SteamGameDetails>();
+            var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? [];
             var matchingGame = games.Find(game => game.AppID == gameDetails.AppID);
 
             if(matchingGame != null) { games.Remove(matchingGame); } // Prevents Duplicates
@@ -87,13 +87,13 @@ namespace EdgeOfEmpireBot.Service
         /// <returns>A string badly formatted as if it was from HK-47</returns>
         private static string ModifyCommandTextToBeHK47(string commandText)
         {
-            string[] sentenceStructures = { "Exclamation! ", "Interrogative? ", "Imperative. ", "Declarative. " };
+            string[] sentenceStructures = ["Exclamation! ", "Interrogative? ", "Imperative. ", "Declarative. "];
 
             // Define arrays of potential sentence components
-            string[] subjects = { "meatbags", "organics", "biologicals", "fleshy beings" };
-            string[] adjectives = { "pathetic", "inferior", "incompetent", "insignificant" };
-            string[] verbs = { "destroy", "eliminate", "eradicate", "annihilate" };
-            string[] objects = { "life forms", "inferior species", "sentient beings", "weaklings" };
+            string[] subjects = ["meatbags", "organics", "biologicals", "fleshy beings"];
+            string[] adjectives = ["pathetic", "inferior", "incompetent", "insignificant"];
+            string[] verbs = ["destroy", "eliminate", "eradicate", "annihilate"];
+            string[] objects = ["life forms", "inferior species", "sentient beings", "weaklings"];
 
             // Generate a random sentence structure and sentence components
             var random = new Random();

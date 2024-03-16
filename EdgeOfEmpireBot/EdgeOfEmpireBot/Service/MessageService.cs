@@ -9,15 +9,14 @@ namespace EdgeOfEmpireBot.Service
     {
         private readonly IDataService dataService;
         private readonly ISteamService steamService;
-        private bool messageIsSafe = false;
+        private readonly bool messageIsSafe = false;
 
         /// <summary>
         /// The message service.
         /// </summary>
         /// <param name="dataService">The data service.</param>
         /// <param name="steamService">The Steam service</param>
-        public MessageService(IDataService dataService,
-            ISteamService steamService)
+        public MessageService(IDataService dataService, ISteamService steamService)
         {
             this.dataService = dataService;
             this.steamService = steamService;
@@ -49,7 +48,7 @@ namespace EdgeOfEmpireBot.Service
             {
                 Console.WriteLine("Processing Message...");
 
-                if (!message.Content.StartsWith("."))
+                if (!message.Content.StartsWith('.'))
                 {
                     // Ignore message.
                     Console.WriteLine("Ignoring Message....");
