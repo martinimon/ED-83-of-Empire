@@ -1,8 +1,7 @@
 ﻿using Discord.WebSocket;
 using Discord;
 using Microsoft.Extensions.DependencyInjection;
-using EdgeOfEmpireBot.Service;
-using EdgeOfEmpireBot.IService;
+using EdgeOfEmpireBot.Services;
 
 namespace EdgeOfEmpireBot.Api;
 
@@ -39,7 +38,7 @@ public class BotApp
     /// <summary>
     /// Configures and registers services.
     /// </summary>
-    private static IServiceProvider CreateProvider()
+    private static ServiceProvider CreateProvider()
     {
         var discordConfig = new DiscordSocketConfig
         {

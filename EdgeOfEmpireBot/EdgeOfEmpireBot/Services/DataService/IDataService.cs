@@ -1,6 +1,6 @@
 ﻿using EdgeOfEmpireBot.Models;
 
-namespace EdgeOfEmpireBot.IService;
+namespace EdgeOfEmpireBot.Services;
 
 /// <summary>
 /// The interface for the data service
