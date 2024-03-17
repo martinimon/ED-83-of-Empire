@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using EdgeOfEmpireBot.IService;
 using Newtonsoft.Json;
 
@@ -108,12 +107,22 @@ namespace EdgeOfEmpireBot.Service
                 case "gamesrequest":
                 case "gr":
                     {
-                        var appId = commandParams[1];
-                        var game = await steamService.RetrieveGameFromSteam(appId);
-                        await dataService.WriteGameToFile(game);
-                        var msg = $"```[Statement]: {game.Name} was added to the list.```";
-                        await SendMessage(msg, channel);
+                        try
+                        {
+                            var appId = commandParams[1];
+                            var game = await steamService.RetrieveGameFromSteam(appId);
+                            await dataService.WriteGameToFile(game);
+                            var msg = $"```[Statement]: {game.Name} was added to the list.```";
+                            await SendMessage(msg, channel);
+                        }
+                        catch (Exception ex)
+                        {
+                            var msg = $"[Error]: Game not added due to the following:\n{ex.Message}";
+                            await SendMessage(msg, channel);
+                        }
                         break;
+
+
                     }
                 case "steam":
                 case "games":

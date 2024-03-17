@@ -1,8 +1,7 @@
 ﻿using EdgeOfEmpireBot.IService;
 using EdgeOfEmpireBot.Models;
 using Newtonsoft.Json;
-using SteamWebAPI2.Interfaces;
-using SteamWebAPI2.Utilities;
+using EdgeOfEmpireBot.Wrappers;
 
 namespace EdgeOfEmpireBot.Service
 {
@@ -11,12 +10,12 @@ namespace EdgeOfEmpireBot.Service
     /// </summary>
     public class SteamService : ISteamService
     {
-        private readonly SteamStore steamInterface;
+        private readonly ISteamStoreApi steamApi;
         private readonly string filePath;
 
         public SteamService()
         {
-            steamInterface = new SteamWebInterfaceFactory(GetToken()).CreateSteamStoreInterface();
+            steamApi = new SteamStoreApi();
             filePath = Path.Combine("Data/Games.json");
         }
 
@@ -36,24 +35,24 @@ namespace EdgeOfEmpireBot.Service
             {
                 try
                 {
-                    var gameDetails = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(game.AppID), "AU");
+                    var gameDetails = await steamApi.GetAppDetails(int.Parse(game.AppID), "AU");
                     var priceOverview = gameDetails.PriceOverview;
-                    var currentPrice = !string.IsNullOrEmpty(priceOverview.InitialFormatted) ? priceOverview.InitialFormatted : priceOverview.FinalFormatted;
+                    var currentPrice = priceOverview.Initial;
                     var discountPercent = priceOverview.DiscountPercent;
-                    var discountedPrice = priceOverview.FinalFormatted;
-                    if (!string.Equals(game.Price, priceOverview.InitialFormatted))
+                    var discountedPrice = priceOverview.Final;
+                    if (!string.Equals(game.Price, priceOverview.Initial))
                     {
                         game.Name = gameDetails.Name;
-                        game.Price = priceOverview.InitialFormatted;
+                        game.Price = priceOverview.Initial.ToString();
                         updatedGames.Add(game);
                     };
-                    if (!string.IsNullOrEmpty(currentPrice))
+                    if (currentPrice != 0)
                     {
-                        result += $"{game.Name} - {game.Price} ({currentPrice})";
+                        result += $"{game.Name} - ${game.Price} (${currentPrice})";
 
                         if (discountPercent > 0)
                         {
-                            result += $" {discountPercent}% off, now {discountedPrice}";
+                            result += $" {discountPercent}% off, now ${discountedPrice}";
                         }
 
                         result += "\n";
@@ -75,14 +74,15 @@ namespace EdgeOfEmpireBot.Service
         /// <returns>Returns a transformed version of the result</returns>
         public async Task<SteamGameDetails> RetrieveGameFromSteam(string appId)
         {
-            var game = await steamInterface.GetStoreAppDetailsAsync(uint.Parse(appId), "AU");
+            var game = await steamApi.GetAppDetails(int.Parse(appId), "AU");
 
             // The SteamGameDetails Model can be extended to have more information if we want it but this is good for now.
+            if(game.PriceOverview == null) { throw new Exception("Game not available on steam"); }
             return new SteamGameDetails
             {
                 AppID = appId.Trim(),
                 Name = game.Name.Trim(),
-                Price = game.PriceOverview.FinalFormatted.Trim()
+                Price = game.PriceOverview.Final.ToString()
             };
         }
 
