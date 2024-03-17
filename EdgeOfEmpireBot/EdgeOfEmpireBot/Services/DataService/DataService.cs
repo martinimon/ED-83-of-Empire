@@ -10,9 +10,11 @@ namespace EdgeOfEmpireBot.Service
     public class DataService : IDataService
     {
         private readonly string gameFilePath;
+        private readonly string rememberFilePath;
         public DataService()
         {
             gameFilePath = Path.Combine("Data/Games.json");
+            rememberFilePath = Path.Combine("Data/Remember.json");
         }
 
         ///<inheritdoc/>
@@ -81,6 +83,34 @@ namespace EdgeOfEmpireBot.Service
         }
 
         /// <summary>
+        /// Writes the phrase to the Remember.json file to recall it later
+        /// </summary>
+        public async Task AddRememberPhraseToFile(string command)
+        {
+            string[] parts = command.Split('"', StringSplitOptions.RemoveEmptyEntries);
+            if(parts.Length > 3)
+            {
+                Console.WriteLine("Incorrect format for command");
+                return;
+            }
+
+            var phrases = JsonConvert.DeserializeObject<Dictionary<int,string>>(await File.ReadAllTextAsync(rememberFilePath)) ?? [];
+            phrases.Add(phrases.Count, parts[1]);
+            await File.WriteAllTextAsync(rememberFilePath, JsonConvert.SerializeObject(phrases, Formatting.Indented));
+        }
+
+        /// <summary>
+        /// Gets a random phrase from the saved phrases and returns is
+        /// </summary>
+        /// <returns>A random phrase</returns>
+        public async Task<string> GetRememberWhenPhraseFromFile()
+        {
+            var random = new Random();
+            var phrases = JsonConvert.DeserializeObject<Dictionary<int,string>>(await File.ReadAllTextAsync(rememberFilePath)) ?? [];
+            return phrases[random.Next(0, phrases.Count)];
+        }
+
+        /// <summary>
         /// converts a string to a badly written version as if it was said by HK-47.
         /// </summary>
         /// <param name="commandText"></param>
@@ -97,11 +127,11 @@ namespace EdgeOfEmpireBot.Service
 
             // Generate a random sentence structure and sentence components
             var random = new Random();
-            var sentenceStructure = sentenceStructures[random.Next(sentenceStructures.Length)];
-            var subject = subjects[random.Next(subjects.Length)];
-            var adjective = adjectives[random.Next(adjectives.Length)];
-            var verb = verbs[random.Next(verbs.Length)];
-            var obj = objects[random.Next(objects.Length)];
+            var sentenceStructure = sentenceStructures[random.Next(0, sentenceStructures.Length)];
+            var subject = subjects[random.Next(0, subjects.Length)];
+            var adjective = adjectives[random.Next(0, adjectives.Length)];
+            var verb = verbs[random.Next(0, verbs.Length)];
+            var obj = objects[random.Next(0, objects.Length)];
 
             // Combine the sentence components into a single sentence
             var sentence = $"{subject} are {adjective}. {verb} the {obj}!";
@@ -112,5 +142,7 @@ namespace EdgeOfEmpireBot.Service
             // Combine the sentence with the input text and the sentence structure
             return $"{sentence} {commandText.Trim()} {sentenceStructure}";
         }
+
+
     }
 }
