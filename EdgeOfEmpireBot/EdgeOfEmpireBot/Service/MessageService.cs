@@ -123,12 +123,22 @@ namespace EdgeOfEmpireBot.Service
                         await SendMessage($"{msg}", channel);
                         break;
                     }
-                default:
+                case "remember":
+                    if (commandParams[1] == "when")
                     {
-                        // Not a custom command so try processing as a simple command.
-                        await ProcessSimpleCommand(command, channel);
+                        var phrase = await dataService.GetRememberWhenPhraseFromFile();
+                        await SendMessage("[Sarcasm]: I dont remember...\n" +
+                        $"[Statement]:That was a joke human.\n[Recalling]: I remember {phrase}", channel);
                         break;
                     }
+                    // Write command param[1] to Remember.json
+                    await dataService.AddRememberPhraseToFile(command);
+                    await SendMessage("[Statement] I will remember that meatbag...", channel);
+                    break;
+                default:
+                    // Not a custom command so try processing as a simple command.
+                    await ProcessSimpleCommand(command, channel);
+                    break;
             }
         }
 
