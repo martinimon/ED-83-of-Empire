@@ -1,6 +1,6 @@
-﻿using EdgeOfEmpireBot.Models;
+﻿using HK47.Models;
 
-namespace EdgeOfEmpireBot.Services;
+namespace HK47.Services;
 
 /// <summary>
 /// The interface for the Steam service

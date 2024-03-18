@@ -1,7 +1,7 @@
-﻿using EdgeOfEmpireBot.Models;
+﻿using HK47.Models;
 using Newtonsoft.Json;
 
-namespace EdgeOfEmpireBot.Services;
+namespace HK47.Services;
 
 /// <summary>
 /// The process message service.
@@ -109,11 +109,17 @@ public class DataService : IDataService
         return phrases[random.Next(0, phrases.Count)];
     }
 
+    public T ReadFromFile<T>(string fileName)
+    {
+        var path = Path.Combine($"Data/{fileName}.json");
+        return JsonConvert.DeserializeObject<T>(File.ReadAllText(path))!;
+    }
+
     /// <summary>
-    /// converts a string to a badly written version as if it was said by HK-47.
+    /// converts a string to a badly written version as if it was said by HK47.
     /// </summary>
     /// <param name="commandText"></param>
-    /// <returns>A string badly formatted as if it was from HK-47</returns>
+    /// <returns>A string badly formatted as if it was from HK47</returns>
     private static string ModifyCommandTextToBeHK47(string commandText)
     {
         string[] sentenceStructures = ["Exclamation! ", "Interrogative? ", "Imperative. ", "Declarative. "];

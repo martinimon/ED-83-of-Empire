@@ -1,8 +1,8 @@
-﻿using EdgeOfEmpireBot.Models;
-using EdgeOfEmpireBot.Wrappers;
+﻿using HK47.Models;
+using HK47.Wrappers;
 using Newtonsoft.Json;
 
-namespace EdgeOfEmpireBot.Services;
+namespace HK47.Services;
 /// <summary>
 /// The Steam Service.
 /// </summary>
