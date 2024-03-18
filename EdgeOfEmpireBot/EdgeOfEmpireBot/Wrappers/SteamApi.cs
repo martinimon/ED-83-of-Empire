@@ -1,7 +1,7 @@
 using SteamStorefrontAPI;
 using SteamStorefrontAPI.Classes;
 
-namespace EdgeOfEmpireBot.Wrappers;
+namespace HK47.Wrappers;
 
 /// <summary>
 /// A wrapper thats used to handle these pesky static calls to a third party
