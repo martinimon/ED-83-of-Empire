@@ -10,11 +10,6 @@
     "Price": "64.95"
   },
   {
-    "Name": "DARK SOULS™: REMASTERED",
-    "AppID": "570940",
-    "Price": "56.95"
-  },
-  {
     "Name": "Palworld",
     "AppID": "1623730",
     "Price": "43.95"
@@ -27,6 +22,11 @@
   {
     "Name": "Baldur's Gate 3",
     "AppID": "1086940",
-    "Price": "89.95"
+    "Price": "A$ 89.95"
+  },
+  {
+    "Name": "DARK SOULS™: REMASTERED",
+    "AppID": "570940",
+    "Price": "A$ 56.95"
   }
 ]

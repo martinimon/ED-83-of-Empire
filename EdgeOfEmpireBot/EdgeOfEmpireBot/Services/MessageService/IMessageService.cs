@@ -1,6 +1,4 @@
-﻿using Discord.WebSocket;
-
-namespace HK47.Services;
+﻿namespace HK47.Services;
 
 public interface IMessageService
 {
