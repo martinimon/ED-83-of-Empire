@@ -1,10 +1,10 @@
-﻿using Discord.WebSocket;
-using Discord;
-using Microsoft.Extensions.DependencyInjection;
-using HK47.Services;
-using HK47.Router;
-using HK47.MessageHandlers.Interfaces;
+﻿using Discord;
+using Discord.WebSocket;
 using HK47.MessageHandlers;
+using HK47.MessageHandlers.Interfaces;
+using HK47.Router;
+using HK47.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HK47.Api;
 
@@ -14,7 +14,6 @@ public class BotApp
     private readonly IMessageRouter messageRouter;
     private readonly IMessageService messageService;
     private readonly DiscordSocketClient client;
-
 
     /// <summary>
     /// The bot itself.
@@ -31,7 +30,8 @@ public class BotApp
         var dataService = serviceProvider.GetRequiredService<IDataService>();
 
         var channel = client.GetChannelAsync(channelId).GetAwaiter().GetResult() as IMessageChannel;
-        messageService = new MessageService(dataService, channel);
+
+        messageService = new MessageService(channel!);
         var steamMessageHandler = new SteamMessageHandler(steamService, dataService, messageService);
         var generalMessageHandler = new GeneralMessageHandler(messageService, dataService);
         messageRouter = new MessageRouter(dataService, steamMessageHandler, generalMessageHandler, messageService);
@@ -106,7 +106,7 @@ public class BotApp
     //private Task MessageReceived(SocketMessage msg)
     private async Task MessageReceived(SocketMessage msg)
     {
-       await messageRouter.ProcessMessage(msg);
+        await messageRouter.ProcessMessage(msg);
     }
 
     /// <summary>

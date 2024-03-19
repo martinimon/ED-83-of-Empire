@@ -8,8 +8,7 @@ namespace HK47.Services;
 /// <summary>
 /// The message service.
 /// </summary>
-/// <param name="dataService">The data service.</param>
-public class MessageService(IDataService dataService, IMessageChannel messageResponseChannel) : IMessageService
+public class MessageService(IMessageChannel messageResponseChannel) : IMessageService
 {
     private bool MessageIsSafe { get; set; }
 

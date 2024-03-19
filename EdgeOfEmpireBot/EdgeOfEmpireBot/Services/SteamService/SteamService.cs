@@ -34,12 +34,13 @@ public class SteamService(ISteamStoreApi steamApi) : ISteamService
                 var currentPrice = priceOverview.Initial;
                 var discountPercent = priceOverview.DiscountPercent;
                 var discountedPrice = priceOverview.Final;
-                if (!string.Equals(game.Price, priceOverview.Initial))
+                if (!Equals(game.Price, priceOverview.Initial))
                 {
                     game.Name = gameDetails.Name;
                     game.Price = priceOverview.Initial.ToString();
                     updatedGames.Add(game);
-                };
+                }
+
                 if (currentPrice != 0)
                 {
                     result += $"{game.Name} - ${game.Price} (${currentPrice})";
