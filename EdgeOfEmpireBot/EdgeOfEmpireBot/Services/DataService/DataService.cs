@@ -81,38 +81,27 @@ public class DataService : IDataService
         await File.WriteAllTextAsync(gameFilePath, JsonConvert.SerializeObject(games, Formatting.Indented));
     }
 
-    /// <summary>
-    /// Writes the phrase to the Remember.json file to recall it later
-    /// </summary>
-    public async Task AddRememberPhraseToFile(string command)
+    ///<inheritdoc/>
+    public async Task AddRememberPhraseToFile(string phrase)
     {
-        string[] parts = command.Split('"', StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length > 3)
-        {
-            Console.WriteLine("Incorrect format for command");
-            return;
-        }
-
-        var phrases = JsonConvert.DeserializeObject<Dictionary<int, string>>(await File.ReadAllTextAsync(rememberFilePath)) ?? [];
-        phrases.Add(phrases.Count, parts[1]);
+        var phrases = await ReadFromFile<Dictionary<int, string>>("Remember") ?? [];
+        phrases.Add(phrases.Count, phrase);
         await File.WriteAllTextAsync(rememberFilePath, JsonConvert.SerializeObject(phrases, Formatting.Indented));
     }
 
-    /// <summary>
-    /// Gets a random phrase from the saved phrases and returns is
-    /// </summary>
-    /// <returns>A random phrase</returns>
+    ///<inheritdoc/>
     public async Task<string> GetRememberWhenPhraseFromFile()
     {
         var random = new Random();
-        var phrases = JsonConvert.DeserializeObject<Dictionary<int, string>>(await File.ReadAllTextAsync(rememberFilePath)) ?? [];
+        var phrases = await ReadFromFile<Dictionary<int, string>>("Remember") ?? [];
         return phrases[random.Next(0, phrases.Count)];
     }
 
-    public T ReadFromFile<T>(string fileName)
+    ///<inheritdoc/>
+    public async Task<T> ReadFromFile<T>(string fileName)
     {
         var path = Path.Combine($"Data/{fileName}.json");
-        return JsonConvert.DeserializeObject<T>(File.ReadAllText(path))!;
+        return JsonConvert.DeserializeObject<T>(await File.ReadAllTextAsync(path))!;
     }
 
     /// <summary>

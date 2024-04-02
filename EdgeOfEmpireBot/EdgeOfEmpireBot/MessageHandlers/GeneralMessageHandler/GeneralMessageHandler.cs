@@ -7,28 +7,20 @@ namespace HK47.MessageHandlers;
 
 public class GeneralMessageHandler(IMessageService messageService, IDataService dataService) : IGeneralMessageHandler
 {
-    /// <summary>
-    /// Processes a Command
-    /// </summary>
-    /// <param name="command"></param>
-    public async Task ProcessCommand(string[] commandParams)
+    /// </inheritdoc>
+    public async Task ProcessCommand(string userInput)
     {
+        // !!!! DO NOT REMOVE THIS COMMENT IT IS VITAL:
+        // Elliotts a silly goose
+        // ----------------------------------------------
         // Check if the command is a custom command that requires functionality, ie a roll.
         // If not a custom command try processing it as a simple command.
         // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
-        var commandNoParam = commandParams[0];
-        var command = commandParams[1];
-        switch (commandNoParam?.ToLower())
+
+        var commandParams = userInput.Split(' ');
+        var command = commandParams!.First().ToLower();
+        switch (command)
         {
-            case "roll":
-                {
-                    // TODO:
-                    //RollCommand()
-                    const string msg = "```[Statement]: Roll command is not ready yet so I need you to calm down and either wait or implement it yourself Meatbag!```";
-                    Console.WriteLine(msg);
-                    await messageService.SendMessage(msg);
-                    break;
-                }
             case "add":
                 {
                     var msg = dataService.AddCommand(command);
@@ -37,17 +29,21 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
                 }
 
             case "remember":
-                if (commandParams[1] == "when")
+                if (commandParams[1] != "when")
                 {
-                    var phrase = await dataService.GetRememberWhenPhraseFromFile();
-                    await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
-                    $"[Statement]:That was a joke human.\n[Recalling]: I remember {phrase}");
+                    // TODO: Improve processing of remembering phrases.
+                    // Add safety checks and what not
+                    var phrase = string.Join(" ", commandParams[1..]);
+                    await dataService.AddRememberPhraseToFile(phrase);
+                    await messageService.SendMessage("[Statement] I will remember that meatbag...");
                     break;
                 }
-                // Write command param[1] to Remember.json
-                await dataService.AddRememberPhraseToFile(command);
-                await messageService.SendMessage("[Statement] I will remember that meatbag...");
+
+                var remember = await dataService.GetRememberWhenPhraseFromFile();
+                await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
+                $"[Statement]:That was a joke human.\n[Recalling]: I remember {remember}");
                 break;
+
             default:
                 // Not a custom command so try processing as a simple command.
                 await ProcessSimpleCommand(command);
@@ -55,10 +51,9 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
         }
     }
 
-        /// <summary>
+    /// <summary>
     /// Process a simple command that can simply be displayed as a text response.
     /// </summary>
-    /// <param name="command"></param>
     private async Task ProcessSimpleCommand(string command)
     {
         var msg = string.Empty;

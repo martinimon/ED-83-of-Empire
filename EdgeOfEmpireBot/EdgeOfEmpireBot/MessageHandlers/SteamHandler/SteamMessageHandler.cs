@@ -5,9 +5,12 @@ namespace HK47.MessageHandlers;
 
 public class SteamMessageHandler(ISteamService steamService, IDataService dataService, IMessageService messageService) : ISteamMessageHandler
 {
-    public async Task ProcessCommand(string[] commandParams)
+    /// </inheritdoc>
+    public async Task ProcessCommand(string userInput)
     {
-        switch (commandParams[0].ToLower())
+        var commandParams = userInput.Split(' ');
+        var command = commandParams!.First().ToLower();
+        switch (command)
         {
             case "requestgame":
             case "gr":

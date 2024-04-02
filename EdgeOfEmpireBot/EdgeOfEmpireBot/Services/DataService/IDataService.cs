@@ -34,9 +34,18 @@ public interface IDataService
     /// <param name="gameDetails">The game details that you want to add</param>
     Task WriteGameToFile(SteamGameDetails gameDetails);
 
+    /// <summary>
+    /// Adds a phrase to the File
+    /// </summary>
     Task AddRememberPhraseToFile(string phrase);
 
+    /// <summary>
+    /// Retrieves a phrase from the Remember.Json file and return a random one
+    /// </summary>
     Task<string> GetRememberWhenPhraseFromFile();
 
-    T ReadFromFile<T>(string filePath);
+    /// <summary>
+    /// Reads and Deserialises data type from a json file
+    /// </summary>
+    Task<T> ReadFromFile<T>(string fileName);
 }

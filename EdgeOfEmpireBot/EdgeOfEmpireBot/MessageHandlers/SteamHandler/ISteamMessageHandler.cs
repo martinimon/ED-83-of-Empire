@@ -2,5 +2,8 @@ namespace HK47.MessageHandlers.Interfaces;
 
 public interface ISteamMessageHandler
 {
-    Task ProcessCommand(string[] commandParams);
+    /// <summary>
+    /// Processes Steam Commands
+    /// </summary>
+    Task ProcessCommand(string userInput);
 }

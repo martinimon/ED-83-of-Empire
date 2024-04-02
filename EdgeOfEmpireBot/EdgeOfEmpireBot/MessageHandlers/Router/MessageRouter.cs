@@ -10,15 +10,14 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     {
         try
         {
-            await messageService.ValidateLength(message.Content);
             Console.WriteLine("Processing Message...");
-
             if (!message.Content.StartsWith('.'))
             {
                 // Ignore message.
                 Console.WriteLine("Ignoring Message....");
                 return;
             }
+            await messageService.ValidateLength(message.Content);
 
             // Removes the '.' prefix to indicate a bot command.
             var messageCommand = message.Content.Remove(0, 1);
@@ -38,17 +37,16 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     /// Processes a Command
     /// </summary>
     /// <param name="command"></param>
-    private async Task RouteCommand(string command)
+    private async Task RouteCommand(string userInput)
     {
         // Check if the command is a custom command that requires functionality, ie a roll.
         // If not a custom command try processing it as a simple command.
         // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
-        var commandParams = command.Split(' ');
-        var commandNoParam = commandParams[0];
+        var command = userInput.Split(' ').First();
 
-        var commands = dataService.ReadFromFile<Dictionary<string,string>>("Commands");
+        var commands = await dataService.ReadFromFile<Dictionary<string,string>>("Commands");
 
-        if (!commands.TryGetValue(commandNoParam.ToLower(), out var process))
+        if (!commands.TryGetValue(command!.ToLower(), out var process))
         {
             await messageService.SendMessage("[Error]: Invalid command detected...");
             return;
@@ -57,10 +55,10 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
         switch(process)
         {
             case "steam":
-                await steamHandler.ProcessCommand(commandParams);
+                await steamHandler.ProcessCommand(userInput);
                 break;
             case "general":
-                await generalHandler.ProcessCommand(commandParams);
+                await generalHandler.ProcessCommand(userInput);
                 break;
             case "edge":
                 break;
