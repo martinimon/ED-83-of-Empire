@@ -1,25 +1,40 @@
-﻿using Discord.WebSocket;
-using Discord;
+﻿using Discord;
+using Discord.WebSocket;
+using HK47.MessageHandlers;
+using HK47.MessageHandlers.Interfaces;
+using HK47.Router;
+using HK47.Services;
 using Microsoft.Extensions.DependencyInjection;
-using EdgeOfEmpireBot.Service;
-using EdgeOfEmpireBot.IService;
 
-namespace EdgeOfEmpireBot.Api;
+namespace HK47.Api;
 
 public class BotApp
 {
     private readonly IServiceProvider serviceProvider;
-    private readonly DiscordSocketClient client;
+    private readonly IMessageRouter messageRouter;
     private readonly IMessageService messageService;
+    private readonly DiscordSocketClient client;
 
     /// <summary>
     /// The bot itself.
     /// </summary>
     public BotApp()
     {
+        const long channelId = 1062707370809098291;
+
         serviceProvider = CreateProvider();
         this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
-        this.messageService = serviceProvider.GetRequiredService<IMessageService>();
+        InitializeBot().GetAwaiter().GetResult();
+
+        var steamService = serviceProvider.GetRequiredService<ISteamService>();
+        var dataService = serviceProvider.GetRequiredService<IDataService>();
+
+        var channel = client.GetChannelAsync(channelId).GetAwaiter().GetResult() as IMessageChannel;
+
+        messageService = new MessageService(channel!);
+        var steamMessageHandler = new SteamMessageHandler(steamService, dataService, messageService);
+        var generalMessageHandler = new GeneralMessageHandler(messageService, dataService);
+        messageRouter = new MessageRouter(dataService, steamMessageHandler, generalMessageHandler, messageService);
     }
 
     static void Main() => new BotApp().MainAsync().GetAwaiter().GetResult();
@@ -29,7 +44,6 @@ public class BotApp
     /// </summary>
     public async Task MainAsync()
     {
-        await InitializeBot();
         await VerifyBotIsConnected();
 
         // Block this task until the program is closed.
@@ -39,7 +53,7 @@ public class BotApp
     /// <summary>
     /// Configures and registers services.
     /// </summary>
-    private static IServiceProvider CreateProvider()
+    private static ServiceProvider CreateProvider()
     {
         var discordConfig = new DiscordSocketConfig
         {
@@ -52,6 +66,9 @@ public class BotApp
         collection.AddScoped<IMessageService, MessageService>();
         collection.AddScoped<IDataService, DataService>();
         collection.AddScoped<ISteamService, SteamService>();
+        collection.AddScoped<ISteamMessageHandler, SteamMessageHandler>();
+        collection.AddScoped<IGeneralMessageHandler, GeneralMessageHandler>();
+        collection.AddScoped<IMessageRouter, MessageRouter>();
 
         return collection.BuildServiceProvider();
     }
@@ -89,7 +106,7 @@ public class BotApp
     //private Task MessageReceived(SocketMessage msg)
     private async Task MessageReceived(SocketMessage msg)
     {
-       await messageService.ProcessMessage(msg);
+        await messageRouter.ProcessMessage(msg);
     }
 
     /// <summary>
@@ -97,13 +114,9 @@ public class BotApp
     /// </summary>
     private async Task VerifyBotIsConnected()
     {
-        // TODO: Consider replacing this to data.
-        const long channelId = 1062707370809098291;
-
         /// !! URGENT DO NOT REMOVE !!
         /// SENDS VERY IMPORTANT START UP MESSAGE
-        var channel = await client.GetChannelAsync(channelId) as IMessageChannel;
-        await channel!.SendMessageAsync("ScurvyDog");
+        await messageService.SendMessage("ScurvyDog");
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-namespace EdgeOfEmpireBot.Models;
+namespace HK47.Models;
 
 public class SteamGameDetails
 {

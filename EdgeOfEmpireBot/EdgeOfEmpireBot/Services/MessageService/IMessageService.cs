@@ -1,23 +1,14 @@
-﻿using Discord.WebSocket;
+﻿namespace HK47.Services;
 
-namespace EdgeOfEmpireBot.IService
+public interface IMessageService
 {
-    public interface IMessageService
-    {
-        /// <summary>
-        /// Sends a message to Discord.
-        /// </summary>
-        Task SendMessage(string messageResponse, ISocketMessageChannel messageResponseChannel);
+    /// <summary>
+    /// Sends a message to Discord.
+    /// </summary>
+    Task SendMessage(string messageResponse);
 
-        /// <summary>
-        /// Processes a message.
-        /// </summary>
-        Task ProcessMessage(SocketMessage message);
-
-        /// <summary>
-        /// A bool to indicate if the message is safe.
-        /// </summary>
-        /// <returns>bool</returns>
-        bool MessageIsSafe();
-    }
+    /// <summary>
+    /// Ensures the length of the commands do not exceed the limit and are not below the minimum
+    /// </summary>
+    Task ValidateLength(string message);
 }

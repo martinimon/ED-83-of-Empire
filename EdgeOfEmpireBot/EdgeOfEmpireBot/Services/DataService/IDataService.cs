@@ -1,6 +1,6 @@
-﻿using EdgeOfEmpireBot.Models;
+﻿using HK47.Models;
 
-namespace EdgeOfEmpireBot.IService;
+namespace HK47.Services;
 
 /// <summary>
 /// The interface for the data service
@@ -34,7 +34,18 @@ public interface IDataService
     /// <param name="gameDetails">The game details that you want to add</param>
     Task WriteGameToFile(SteamGameDetails gameDetails);
 
+    /// <summary>
+    /// Adds a phrase to the File
+    /// </summary>
     Task AddRememberPhraseToFile(string phrase);
 
+    /// <summary>
+    /// Retrieves a phrase from the Remember.Json file and return a random one
+    /// </summary>
     Task<string> GetRememberWhenPhraseFromFile();
+
+    /// <summary>
+    /// Reads and Deserialises data type from a json file
+    /// </summary>
+    Task<T> ReadFromFile<T>(string fileName);
 }
