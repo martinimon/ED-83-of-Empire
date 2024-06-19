@@ -107,6 +107,7 @@ public class DataService : IDataService
     /// <summary>
     /// converts a string to a badly written version as if it was said by HK47.
     /// </summary>
+    /// /// <param name="commandText">As the name suggests</param>
     /// <returns>A string badly formatted as if it was from HK47</returns>
     private static string ModifyCommandTextToBeHK47(string commandText)
     {

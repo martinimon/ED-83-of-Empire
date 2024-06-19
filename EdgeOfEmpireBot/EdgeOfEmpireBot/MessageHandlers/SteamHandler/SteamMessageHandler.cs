@@ -24,6 +24,10 @@ public class SteamMessageHandler(ISteamService steamService, IDataService dataSe
         }
     }
 
+    /// <summary>
+    /// Takes the provided app id looks up the game and addes it to the list of games
+    /// </summary>
+    /// <param name="appId">App Id of the game on steam</param>
     private async Task RecordGameRequest(string appId)
     {
         try
@@ -38,6 +42,9 @@ public class SteamMessageHandler(ISteamService steamService, IDataService dataSe
         }
     }
 
+    /// <summary>
+    /// Displays the list of games we have stored and their associated prices
+    /// </summary>
     private async Task DisplayCurrentGames()
     {
         var (msg, updatedGames) = await steamService.GetGamePrices();
