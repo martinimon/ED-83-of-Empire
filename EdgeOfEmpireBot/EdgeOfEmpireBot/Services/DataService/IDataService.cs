@@ -48,4 +48,9 @@ public interface IDataService
     /// Reads and Deserialises data type from a json file
     /// </summary>
     Task<T> ReadFromFile<T>(string fileName);
+
+    /// <summary>
+    /// Add or Update a Keypair value in a Json file
+    /// </summary>
+    Task UpsertToJsonFile<TKey, TValue>(string fileName, (TKey Key, TValue Value) contentToWrite) where TKey : notnull;
 }
