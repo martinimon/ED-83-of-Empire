@@ -1,6 +1,6 @@
 name: "Build the Bot"
 
-# Conditions to trigger the branch. TODO - change back to main when ready,
+# Conditions to trigger the branch. TODO - change back to main when ready.
 on:
   push:
     branches: [ "feature/27-create-deployment-workflow" ]
@@ -9,7 +9,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,14 +16,14 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: '8.0.x'
         
     - name: Restore dependencies
       run: dotnet restore
       working-directory: EdgeOfEmpireBot/EdgeOfEmpireBot.sln
-      
-      - name: Build
-        run: dotnet build --no-restore
-        working-directory: EdgeOfEmpireBot/EdgeOfEmpireBot.sln
 
-    #TODO - Build unit tests and validate they pass.
+    - name: Build
+      run: dotnet build --no-restore
+      working-directory: EdgeOfEmpireBot/EdgeOfEmpireBot.sln
+
+#TODO - Build unit tests and validate they pass.
