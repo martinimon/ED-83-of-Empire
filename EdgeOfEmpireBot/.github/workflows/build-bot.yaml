@@ -2,9 +2,10 @@ name: "Build the Bot"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "feature/27-create-deployment-workflow" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "feature/27-create-deployment-workflow" ]
+
 
 
 jobs:
