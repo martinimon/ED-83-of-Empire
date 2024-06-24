@@ -1,0 +1,29 @@
+name: "Build the Bot"
+
+# Conditions to trigger the branch. TODO - change back to main when ready,
+on:
+  push:
+    branches: [ "feature/27-create-deployment-workflow" ]
+  pull_request:
+    branches: [ "feature/27-create-deployment-workflow" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+      
+
+    #TODO - Build unit tests and validate they pass.
