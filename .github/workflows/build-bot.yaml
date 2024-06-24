@@ -1,11 +1,10 @@
 name: "Build the Bot"
 
-# Conditions to trigger the branch. TODO - change back to main when ready.
 on:
   push:
-    branches: [ "feature/27-create-deployment-workflow" ]
+    branches: [ "main" ]  # This triggers the workflow when code is merged into main
   pull_request:
-    branches: [ "feature/27-create-deployment-workflow" ]
+    branches: [ "*" ]  # This triggers the workflow on pull requests to any branch
 
 jobs:
   build:
@@ -21,7 +20,6 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
       working-directory: EdgeOfEmpireBot
-
 
     - name: Build
       run: dotnet build --no-restore
