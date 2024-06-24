@@ -21,9 +21,10 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: EdgeOfEmpireBot/EdgeOfEmpireBot.sln
       
-    - name: Build
-      run: dotnet build --no-restore
-      
+      - name: Build
+        run: dotnet build --no-restore
+        working-directory: EdgeOfEmpireBot/EdgeOfEmpireBot.sln
 
     #TODO - Build unit tests and validate they pass.
