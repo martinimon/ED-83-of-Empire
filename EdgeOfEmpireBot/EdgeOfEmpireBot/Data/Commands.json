@@ -2,8 +2,6 @@
     "remember": "general",
     "test": "general",
     "add": "general",
-
-    "gr": "steam",
-    "games": "steam",
-    "requestgame": "steam"
+    "displayGames": "steam",
+    "requestGame": "steam"
 }
