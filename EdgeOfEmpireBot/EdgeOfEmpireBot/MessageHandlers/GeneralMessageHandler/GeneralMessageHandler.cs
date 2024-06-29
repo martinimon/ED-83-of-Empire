@@ -24,26 +24,12 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
         switch (command)
         {
             case "add":
-                {
-                    var msg = dataService.AddCommand(command);
-                    await messageService.SendMessage(msg);
-                    break;
-                }
+                var msg = dataService.AddCommand(command);
+                await messageService.SendMessage(msg);
+                break;
 
             case "remember":
-                if (commandParams[1] != "when")
-                {
-                    // TODO: Improve processing of remembering phrases.
-                    // Add safety checks and what not
-                    var phrase = string.Join(" ", commandParams[1..]);
-                    await dataService.AddRememberPhraseToFile(phrase);
-                    await messageService.SendMessage("[Statement] I will remember that meatbag...");
-                    break;
-                }
-
-                var remember = await dataService.GetRememberWhenPhraseFromFile();
-                await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
-                $"[Statement]:That was a joke human.\n[Recalling]: I remember {remember}");
+                await RememberWhen(commandParams);
                 break;
             case "changerpg":
                 await ChangeRpgs(commandParams[1]);
@@ -109,5 +95,25 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
             msg = "```[Statement] it appears the developer fucked up and broke something.\n[Observation] The error is\n" + ex.Message + "```";
             await messageService.SendMessage(msg);
         }
+    }
+
+    /// <summary>
+    /// Contains Logic for Remember When Functionality
+    /// </summary>
+    private async Task RememberWhen(string[] commandParams)
+    {
+        if (commandParams[1] != "when")
+        {
+            // TODO: Improve processing of remembering phrases.
+            // Add safety checks and what not
+            var phrase = string.Join(" ", commandParams[1..]);
+            await dataService.AddRememberPhraseToFile(phrase);
+            await messageService.SendMessage("[Statement] I will remember that meatbag...");
+            return;
+        }
+
+        var remember = await dataService.GetRememberWhenPhraseFromFile();
+        await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
+        $"[Statement]:That was a joke human.\n[Recalling]: I remember {remember}");
     }
 }

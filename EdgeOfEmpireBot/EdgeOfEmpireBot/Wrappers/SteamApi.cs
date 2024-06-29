@@ -12,16 +12,20 @@ namespace HK47.Wrappers;
 /// </remarks>
 public class SteamStoreApi : ISteamStoreApi
 {
-    /// <summary>
-    /// Retrieves the Application Details from the Public facing API
-    /// </summary>
+    /// <inheritdoc/>
     public Task<SteamApp> GetAppDetails(int appId, string countryCode)
     {
         return AppDetails.GetAsync(appId, countryCode);
     }
 }
 
+/// <summary>
+/// An interface for the wrapper thats used to handle these pesky static calls to a third party
+/// </summary>
 public interface ISteamStoreApi
 {
+    /// <summary>
+    /// Retrieves the Application Details from the Public facing API
+    /// </summary>
     Task<SteamApp> GetAppDetails(int appId, string countryCode);
 }
