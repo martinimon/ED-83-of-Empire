@@ -7,7 +7,9 @@ namespace HK47.MessageHandlers;
 
 public class GeneralMessageHandler(IMessageService messageService, IDataService dataService) : IGeneralMessageHandler
 {
-    /// <inheritdoc/>
+    private readonly string[] ListOfRpgs = ["edge", "masks", "sprawl"]; // This contains example rpgs
+
+    /// </inheritdoc>
     public async Task ProcessCommand(string userInput)
     {
         // !!!! DO NOT REMOVE THIS COMMENT IT IS VITAL:
@@ -29,12 +31,29 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
             case "remember":
                 await RememberWhen(commandParams);
                 break;
-
+            case "changerpg":
+                await ChangeRpgs(commandParams[1]);
+                break;
             default:
                 // Not a custom command so try processing as a simple command.
                 await ProcessSimpleCommand(command);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Updates the commands that are shared across rpgs to the rpg that is provided
+    /// </summary>
+    private async Task ChangeRpgs(string rpg)
+    {
+        if (!ListOfRpgs.Contains(rpg))
+        {
+            await messageService.SendMessage("[Sad]: That RPG is not available...");
+            return;
+        }
+
+        await dataService.UpsertToJsonFile("Commands", ("roll", rpg));
+        await messageService.SendMessage("[Ecstatic]: How the turn tables...");
     }
 
     /// <summary>

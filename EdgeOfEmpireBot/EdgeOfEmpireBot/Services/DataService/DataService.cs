@@ -1,4 +1,5 @@
-﻿using HK47.Models;
+﻿using Discord;
+using HK47.Models;
 using Newtonsoft.Json;
 
 namespace HK47.Services;
@@ -102,6 +103,16 @@ public class DataService : IDataService
     {
         var path = Path.Combine($"Data/{fileName}.json");
         return JsonConvert.DeserializeObject<T>(await File.ReadAllTextAsync(path))!;
+    }
+
+    /// <inheritdoc/>
+    public async Task UpsertToJsonFile<TKey, TValue>(string fileName, (TKey Key, TValue Value) contentToWrite) where TKey : notnull
+    {
+        var path = Path.Combine($"Data/{fileName}.json");
+        var contents = JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(await File.ReadAllTextAsync(path)) ?? [];
+        contents[contentToWrite.Key] = contentToWrite.Value; // Updates or Adds the new Key pair value
+
+        await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(contents, Formatting.Indented));
     }
 
     /// <summary>
