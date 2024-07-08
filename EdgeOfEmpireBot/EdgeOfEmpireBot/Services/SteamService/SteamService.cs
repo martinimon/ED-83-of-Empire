@@ -3,6 +3,7 @@ using HK47.Wrappers;
 using Newtonsoft.Json;
 
 namespace HK47.Services;
+
 /// <summary>
 /// The Steam Service.
 /// </summary>

@@ -45,11 +45,6 @@ public interface IDataService
     Task<string> GetRememberWhenPhraseFromFile();
 
     /// <summary>
-    /// Reads from a file as a string
-    /// </summary>
-    Task<string> ReadFromFile(string fileName, string extension = "json");
-
-    /// <summary>
     /// Reads and Deserialises data type from a json file
     /// </summary>
     Task<T> ReadFromFileAndDeserialize<T>(string fileName, string extension = "json");
@@ -58,4 +53,9 @@ public interface IDataService
     /// Write Contents to a file
     /// </summary>
     Task WriteToFile<T>(string fileName, T contents, string extension = "json");
+
+    /// <summary>
+    /// Add or Update a Keypair value in a Json file
+    /// </summary>
+    Task UpsertToJsonFile<TKey, TValue>(string fileName, (TKey Key, TValue Value) contentToWrite) where TKey : notnull;
 }

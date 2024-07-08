@@ -68,7 +68,7 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     {
         var commands = await dataService.ReadFromFileAndDeserialize<Dictionary<string, string>>("Commands");
 
-        if (!commands.TryGetValue(command!.ToLower(), out var process))
+        if (!commands.TryGetValue(command!, out var process))
         {
             await messageService.SendMessage("[Error]: Invalid command detected...");
             return string.Empty;
