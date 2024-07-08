@@ -13,7 +13,7 @@ public interface IDataService
     /// <remarks>
     /// The command format should be in the form .add "commandName" "CommandText"
     /// </remarks>
-    string AddCommand(string command);
+    Task<string> AddCommand(string command);
 
     /// <summary>
     /// Gets the game details from local storage
@@ -45,7 +45,17 @@ public interface IDataService
     Task<string> GetRememberWhenPhraseFromFile();
 
     /// <summary>
+    /// Reads from a file as a string
+    /// </summary>
+    Task<string> ReadFromFile(string fileName, string extension = "json");
+
+    /// <summary>
     /// Reads and Deserialises data type from a json file
     /// </summary>
-    Task<T> ReadFromFile<T>(string fileName);
+    Task<T> ReadFromFileAndDeserialize<T>(string fileName, string extension = "json");
+
+    /// <summary>
+    /// Write Contents to a file
+    /// </summary>
+    Task WriteToFile<T>(string fileName, T contents, string extension = "json");
 }

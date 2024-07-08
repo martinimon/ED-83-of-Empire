@@ -4,24 +4,15 @@ using Newtonsoft.Json;
 namespace HK47.Services;
 
 /// <summary>
-/// The process message service.
+/// The service is responsible for reading/writing operations to the various files that we have.
 /// </summary>
 public class DataService : IDataService
 {
-    private readonly string gameFilePath;
-    private readonly string rememberFilePath;
-    public DataService()
-    {
-        gameFilePath = Path.Combine("Data/Games.json");
-        rememberFilePath = Path.Combine("Data/Remember.json");
-    }
-
     ///<inheritdoc/>
-    public string AddCommand(string command)
+    public async Task<string> AddCommand(string command)
     {
         // Parse the existing JSON file into a JObject
-        var filePath = Path.Combine("Data/BasicCommands.json");
-        var commands = JsonConvert.DeserializeObject<Dictionary<string, string>>(File.ReadAllText(filePath));
+        var commands = await ReadFromFileAndDeserialize<Dictionary<string, string>>("BasicCommands");
 
         // Split the command string into parts and remove any surrounding quotes
         string[] parts = command.Split('"', StringSplitOptions.RemoveEmptyEntries);
@@ -37,7 +28,7 @@ public class DataService : IDataService
             commands?.Add(commandLabel, commandText);
 
             // Write the updated commands back to the JSON file
-            File.WriteAllText(filePath, JsonConvert.SerializeObject(commands, Formatting.Indented));
+            await WriteToFile("BasicCommands", commands);
 
             return $"```[Statement]: .{commandLabel} command added to the list meatbag.```";
         }
@@ -51,7 +42,7 @@ public class DataService : IDataService
     ///<inheritdoc/>
     public async Task<string> GetGameByName(string name)
     {
-        var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? [];
+        var games = await ReadFromFileAndDeserialize<List<SteamGameDetails>>("Games");
         var game = games.Find(game => string.Equals(game.Name, name, StringComparison.OrdinalIgnoreCase));
         if (game == null) { return $"No game was found with the name {name}"; }
 
@@ -72,36 +63,55 @@ public class DataService : IDataService
     ///<inheritdoc/>
     public async Task WriteGameToFile(SteamGameDetails gameDetails)
     {
-        var games = JsonConvert.DeserializeObject<List<SteamGameDetails>>(await File.ReadAllTextAsync(gameFilePath)) ?? [];
+        var games = await ReadFromFileAndDeserialize<List<SteamGameDetails>>("Games");
         var matchingGame = games.Find(game => game.AppID == gameDetails.AppID);
 
         if (matchingGame != null) { games.Remove(matchingGame); } // Prevents Duplicates
 
         games.Add(gameDetails);
-        await File.WriteAllTextAsync(gameFilePath, JsonConvert.SerializeObject(games, Formatting.Indented));
+        await WriteToFile("Games", games);
     }
 
     ///<inheritdoc/>
     public async Task AddRememberPhraseToFile(string phrase)
     {
-        var phrases = await ReadFromFile<Dictionary<int, string>>("Remember") ?? [];
+        var phrases = await ReadFromFileAndDeserialize<Dictionary<int, string>>("Remember") ?? [];
         phrases.Add(phrases.Count, phrase);
-        await File.WriteAllTextAsync(rememberFilePath, JsonConvert.SerializeObject(phrases, Formatting.Indented));
+        await WriteToFile("Remember", phrases);
     }
 
     ///<inheritdoc/>
     public async Task<string> GetRememberWhenPhraseFromFile()
     {
         var random = new Random();
-        var phrases = await ReadFromFile<Dictionary<int, string>>("Remember") ?? [];
+        var phrases = await ReadFromFileAndDeserialize<Dictionary<int, string>>("Remember") ?? [];
         return phrases[random.Next(0, phrases.Count)];
     }
 
     ///<inheritdoc/>
-    public async Task<T> ReadFromFile<T>(string fileName)
+    public async Task<T> ReadFromFileAndDeserialize<T>(string fileName, string extension = "json")
     {
-        var path = Path.Combine($"Data/{fileName}.json");
+        var path = Path.Combine($"Data/{fileName}.{extension}");
         return JsonConvert.DeserializeObject<T>(await File.ReadAllTextAsync(path))!;
+    }
+
+    ///<inheritdoc/>
+    public async Task<string> ReadFromFile(string fileName, string extension = "json")
+    {
+        var path = Path.Combine($"Data/{fileName}.{extension}");
+        return await File.ReadAllTextAsync(path)!;
+    }
+
+    ///<inheritdoc/>
+    public async Task WriteToFile<T>(string fileName, T contents, string extension = "json")
+    {
+        var path = Path.Combine($"Data/{fileName}.{extension}");
+        if (extension == "json")
+        {
+            await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(contents, Formatting.Indented));
+            return;
+        }
+        await File.WriteAllTextAsync(path, contents!.ToString());
     }
 
     /// <summary>
