@@ -12,3 +12,4 @@
 /EdgeOfEmpireBot/EdgeOfEmpireBot/Data/steamToken.txt
 **/local.settings.json
 **/.vscode/**
+**/out/

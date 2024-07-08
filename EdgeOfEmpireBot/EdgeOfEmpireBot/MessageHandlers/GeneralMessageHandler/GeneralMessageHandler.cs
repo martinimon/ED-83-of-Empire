@@ -9,7 +9,7 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
 {
     private readonly string[] ListOfRpgs = ["edge", "masks", "sprawl"]; // This contains example rpgs
 
-    /// </inheritdoc>
+    /// <inheritdoc/>
     public async Task ProcessCommand(string userInput)
     {
         // !!!! DO NOT REMOVE THIS COMMENT IT IS VITAL:
@@ -24,7 +24,7 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
         switch (command)
         {
             case "add":
-                var msg = dataService.AddCommand(command);
+                var msg = await dataService.AddCommand(command);
                 await messageService.SendMessage(msg);
                 break;
 
