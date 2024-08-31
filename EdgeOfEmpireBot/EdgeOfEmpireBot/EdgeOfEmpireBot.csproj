@@ -29,7 +29,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Data/token.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="Data/BasicCommands.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
