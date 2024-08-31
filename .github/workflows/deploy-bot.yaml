@@ -20,8 +20,8 @@ jobs:
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       run: |
-        cd ~/dev/discord_bot/EdgeOfEmpireBot
-        git pull origin main --no-rebase  # Specify the merge strategy
+        cd ~/dev/discord_bot/EdgeOfEmpireBot/EdgeOfEmpireBot  # Correct directory where the .csproj file is located
+        git pull origin ${{ github.ref }} --no-rebase  # Pull the latest changes from the triggering branch
         dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
 
     - name: Start Bot on Server
