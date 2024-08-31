@@ -16,7 +16,7 @@ jobs:
 
     - name: Build and Deploy
       run: |
-        cd ~/discord_files
+        cd ~/dev/discord_bot
         git pull origin main
         dotnet publish -c Release -o output
 
