@@ -19,16 +19,17 @@ jobs:
       with:
         ref: ${{ github.ref }}  # Check out the branch that triggered the workflow
 
-    - name: Build and Deploy
+    - name: Build Bot
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}  # Use environment variable for the username
       run: |
-        cd ~/dev/discord_bot/EdgeOfEmpireBot/EdgeOfEmpireBot
+        cd ~/dev/discord_bot/EdgeOfEmpireBot
         git pull origin main
         dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
 
-        # Start the bot in a screen session
-        screen -dmS discord_bot_session dotnet output/EdgeOfEmpireBot.dll
-        
-        # # Run your bot with the injected token (make sure your application uses the token correctly)
-        # nohup dotnet output/EdgeOfEmpireBot.dll &
+    - name: Start Bot on Server
+      env:
+        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}  # Obscure the username using environment variable
+      run: |
+        sudo -u $SERVER_USERNAME bash /home/$SERVER_USERNAME/scripts/start_bot.sh
