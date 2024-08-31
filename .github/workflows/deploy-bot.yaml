@@ -4,21 +4,20 @@ on:
   push:
     branches:
       - main
-      - feature/27-create-deployment-workflow
+      - feature/27-create-deployment-workflow  # Add your branches here
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-    - name: Deploy to server
+    - name: Build and Deploy
       run: |
-        ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} 'cd ~/discord_files && git pull origin main && dotnet publish -c Release -o output'
+        cd ~/discord_files
+        git pull origin main
+        dotnet publish -c Release -o output
+
+        #TODO expand on what needs to be done when the bot is deployed. 
