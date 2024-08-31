@@ -1,4 +1,4 @@
-name: Deploy to Server
+name: Deploy and Start Bot
 
 on:
   push:
@@ -11,25 +11,19 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    # - name: Checkout code
-    #   uses: actions/checkout@v2
-
     - name: Checkout code
       uses: actions/checkout@v2
       with:
-        ref: ${{ github.ref }}  # Check out the branch that triggered the workflow
+        ref: ${{ github.ref }}
 
     - name: Build Bot
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}  # Use environment variable for the username
       run: |
         cd ~/dev/discord_bot/EdgeOfEmpireBot
-        git pull origin main
+        git pull origin main --no-rebase  # Specify the merge strategy
         dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
 
     - name: Start Bot on Server
-      env:
-        SERVER_USERNAME: ${{ secrets.SERVER_USERNAME }}  # Obscure the username using environment variable
       run: |
-        sudo -u $SERVER_USERNAME bash /home/$SERVER_USERNAME/scripts/start_bot.sh
+        sudo /home/martinimon/scripts/start_bot.sh
