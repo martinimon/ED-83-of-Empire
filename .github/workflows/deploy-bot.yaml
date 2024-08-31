@@ -16,11 +16,11 @@ jobs:
       with:
         ref: ${{ github.ref }}
 
-    - name: Clean previous build
-      run: dotnet clean EdgeOfEmpireBot/EdgeOfEmpireBot.sln
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      working-directory: EdgeOfEmpireBot
+    # - name: Clean previous build
+    #   run: dotnet clean EdgeOfEmpireBot/EdgeOfEmpireBot.sln
+    #   env:
+    #     DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+    #   working-directory: EdgeOfEmpireBot
 
     - name: Restore dependencies
       run: dotnet restore
