@@ -139,19 +139,27 @@ public class BotApp
     /// <returns>the token string</returns>
     private static string GetToken()
     {
-        var token = string.Empty;
+        // Attempt to get the token from an environment variable named "DISCORD_TOKEN"
+        var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
 
-        try
+        // If the environment variable is not set or is empty, attempt to read from the file
+        if (string.IsNullOrEmpty(token))
         {
-            string path = Path.Combine("Data/token.txt");
-            token = File.ReadAllText(path);
+            try
+            {
+                string path = Path.Combine("Data/token.txt");
+                token = File.ReadAllText(path);  // Fallback to reading the token from the file if the environment variable is not set
+            }
+            catch (Exception ex)
+            {
+                token = string.Empty;
+                Console.WriteLine($"Error reading token from file: {ex.Message}");
+            }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
+
         return token;
     }
+
 
     /// <summary>
     /// Logs a message to console.
