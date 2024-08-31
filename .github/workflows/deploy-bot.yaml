@@ -20,7 +20,7 @@ jobs:
       run: |
         cd ~/dev/discord_bot/EdgeOfEmpireBot
         git pull origin main
-        dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
+        dotnet publish EdgeOfEmpireBot.sln -c Release -o output
 
         # Run your bot with the injected token (make sure your application uses the token correctly)
         nohup dotnet output/EdgeOfEmpireBot.dll &
