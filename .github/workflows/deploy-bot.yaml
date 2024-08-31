@@ -26,6 +26,9 @@ jobs:
         cd ~/dev/discord_bot/EdgeOfEmpireBot/EdgeOfEmpireBot
         git pull origin main
         dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
+
+        # Start the bot in a screen session
+        screen -dmS discord_bot_session dotnet output/EdgeOfEmpireBot.dll
         
-        # Run your bot with the injected token (make sure your application uses the token correctly)
-        nohup dotnet output/EdgeOfEmpireBot.dll &
+        # # Run your bot with the injected token (make sure your application uses the token correctly)
+        # nohup dotnet output/EdgeOfEmpireBot.dll &
