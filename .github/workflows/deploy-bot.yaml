@@ -23,13 +23,13 @@ jobs:
       working-directory: EdgeOfEmpireBot
 
     - name: Build
-      run: dotnet build --no-restore --output ../output
+      run: dotnet build --no-restore --output ../MainBotOutput
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       working-directory: EdgeOfEmpireBot
 
     - name: Publish
-      run: dotnet publish --no-restore -c Release -o ../output
+      run: dotnet publish --no-restore -c Release -o ../MainBotOutput
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       working-directory: EdgeOfEmpireBot
