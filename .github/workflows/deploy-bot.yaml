@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/27-create-deployment-workflow
+      - feature/27-create-deployment-workflow  # Add your branches here
 
 jobs:
   deploy:
@@ -21,7 +21,6 @@ jobs:
         cd ~/dev/discord_bot
         git pull origin main
         dotnet publish -c Release -o output
-
-        #TODO - Look into this part more/other methods of starting the built bot. 
-        # Use your preferred method to run the bot with the injected token
+        
+        # Run your bot, inject token if needed
         nohup dotnet output/YourBot.dll &
