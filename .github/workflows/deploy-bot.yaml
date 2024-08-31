@@ -19,9 +19,6 @@ jobs:
       with:
         ref: ${{ github.ref }}  # Check out the branch that triggered the workflow
 
-
-
-
     - name: Build and Deploy
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
