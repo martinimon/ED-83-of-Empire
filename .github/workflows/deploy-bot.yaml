@@ -4,11 +4,11 @@ on:
   push:
     branches:
       - main
-      - feature/27-create-deployment-workflow  # Add your branches here
+      - feature/27-create-deployment-workflow
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted 
 
     steps:
     - name: Checkout code
@@ -19,5 +19,4 @@ jobs:
         cd ~/dev/discord_bot
         git pull origin main
         dotnet publish -c Release -o output
-
-        #TODO expand on what needs to be done when the bot is deployed. 
+        # Add any additional deployment steps here like injecting the Discord token... Need to set up a new bot for dev or prod either or. 
