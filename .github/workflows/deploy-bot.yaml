@@ -3,9 +3,7 @@ name: "Deploy to Server"
 
 on:
   push:
-    branches: 
-      - main
-      - feature/27-create-deployment-workflow
+    branches: [ "main" ]  # This triggers the workflow when code is merged into main
 
 
 jobs: 
