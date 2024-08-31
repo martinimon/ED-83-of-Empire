@@ -10,9 +10,17 @@ jobs:
   deploy:
     runs-on: self-hosted
 
-    steps:
+    # steps:
+    # - name: Checkout code
+    #   uses: actions/checkout@v2
+
     - name: Checkout code
       uses: actions/checkout@v2
+      with:
+        ref: ${{ github.ref }}  # Check out the branch that triggered the workflow
+
+
+
 
     - name: Build and Deploy
       env:
