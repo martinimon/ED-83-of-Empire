@@ -16,13 +16,23 @@ jobs:
       with:
         ref: ${{ github.ref }}
 
-    - name: Build Bot
+    - name: Restore dependencies
+      run: dotnet restore
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      run: |
-        cd ~/dev/discord_bot/EdgeOfEmpireBot/EdgeOfEmpireBot  # Correct directory where the .csproj file is located
-        git pull origin ${{ github.ref }} --no-rebase  # Pull the latest changes from the triggering branch
-        dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
+      working-directory: EdgeOfEmpireBot
+
+    - name: Build
+      run: dotnet build --no-restore --output ../output
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      working-directory: EdgeOfEmpireBot
+
+    - name: Publish
+      run: dotnet publish --no-restore -c Release -o ../output
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      working-directory: EdgeOfEmpireBot
 
     - name: Start Bot on Server
       env:
