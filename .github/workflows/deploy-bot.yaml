@@ -8,15 +8,20 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Build and Deploy
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}  # Inject Discord token from GitHub Secrets
       run: |
         cd ~/dev/discord_bot
         git pull origin main
         dotnet publish -c Release -o output
-        # Add any additional deployment steps here like injecting the Discord token... Need to set up a new bot for dev or prod either or. 
+
+        #TODO - Look into this part more/other methods of starting the built bot. 
+        # Use your preferred method to run the bot with the injected token
+        nohup dotnet output/YourBot.dll &
