@@ -25,5 +25,7 @@ jobs:
         dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
 
     - name: Start Bot on Server
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}  # Ensure the environment variable is passed to the script
       run: |
         sudo /home/martinimon/scripts/start_bot.sh
