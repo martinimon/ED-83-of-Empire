@@ -1,4 +1,5 @@
-﻿using HK47.Models;
+﻿using Discord;
+using HK47.Models;
 using Newtonsoft.Json;
 
 namespace HK47.Services;
@@ -104,10 +105,20 @@ public class DataService : IDataService
         return JsonConvert.DeserializeObject<T>(await File.ReadAllTextAsync(path))!;
     }
 
+    /// <inheritdoc/>
+    public async Task UpsertToJsonFile<TKey, TValue>(string fileName, (TKey Key, TValue Value) contentToWrite) where TKey : notnull
+    {
+        var path = Path.Combine($"Data/{fileName}.json");
+        var contents = JsonConvert.DeserializeObject<Dictionary<TKey, TValue>>(await File.ReadAllTextAsync(path)) ?? [];
+        contents[contentToWrite.Key] = contentToWrite.Value; // Updates or Adds the new Key pair value
+
+        await File.WriteAllTextAsync(path, JsonConvert.SerializeObject(contents, Formatting.Indented));
+    }
+
     /// <summary>
     /// converts a string to a badly written version as if it was said by HK47.
     /// </summary>
-    /// <param name="commandText"></param>
+    /// /// <param name="commandText">As the name suggests</param>
     /// <returns>A string badly formatted as if it was from HK47</returns>
     private static string ModifyCommandTextToBeHK47(string commandText)
     {

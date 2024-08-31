@@ -45,7 +45,7 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
         var command = userInput.Split(' ').First();
 
         var process = await GetProcess(command);
-        switch(process)
+        switch (process)
         {
             case "steam":
                 await steamHandler.ProcessCommand(userInput);
@@ -66,9 +66,9 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     /// </returns>
     private async Task<string> GetProcess(string command)
     {
-        var commands = await dataService.ReadFromFile<Dictionary<string,string>>("Commands");
+        var commands = await dataService.ReadFromFile<Dictionary<string, string>>("Commands");
 
-        if (!commands.TryGetValue(command!.ToLower(), out var process))
+        if (!commands.TryGetValue(command!, out var process))
         {
             await messageService.SendMessage("[Error]: Invalid command detected...");
             return string.Empty;

@@ -7,6 +7,8 @@ namespace HK47.MessageHandlers;
 
 public class GeneralMessageHandler(IMessageService messageService, IDataService dataService) : IGeneralMessageHandler
 {
+    private readonly string[] ListOfRpgs = ["edge", "masks", "sprawl"]; // This contains example rpgs
+
     /// </inheritdoc>
     public async Task ProcessCommand(string userInput)
     {
@@ -18,37 +20,40 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
         // TODO: Consider the order of this once the scope of overall commands have been established. For efficency.
 
         var commandParams = userInput.Split(' ');
-        var command = commandParams!.First().ToLower();
+        var command = commandParams![0].ToLower();
         switch (command)
         {
             case "add":
-                {
-                    var msg = dataService.AddCommand(command);
-                    await messageService.SendMessage(msg);
-                    break;
-                }
-
-            case "remember":
-                if (commandParams[1] != "when")
-                {
-                    // TODO: Improve processing of remembering phrases.
-                    // Add safety checks and what not
-                    var phrase = string.Join(" ", commandParams[1..]);
-                    await dataService.AddRememberPhraseToFile(phrase);
-                    await messageService.SendMessage("[Statement] I will remember that meatbag...");
-                    break;
-                }
-
-                var remember = await dataService.GetRememberWhenPhraseFromFile();
-                await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
-                $"[Statement]:That was a joke human.\n[Recalling]: I remember {remember}");
+                var msg = dataService.AddCommand(command);
+                await messageService.SendMessage(msg);
                 break;
 
+            case "remember":
+                await RememberWhen(commandParams);
+                break;
+            case "changerpg":
+                await ChangeRpgs(commandParams[1]);
+                break;
             default:
                 // Not a custom command so try processing as a simple command.
                 await ProcessSimpleCommand(command);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Updates the commands that are shared across rpgs to the rpg that is provided
+    /// </summary>
+    private async Task ChangeRpgs(string rpg)
+    {
+        if (!ListOfRpgs.Contains(rpg))
+        {
+            await messageService.SendMessage("[Sad]: That RPG is not available...");
+            return;
+        }
+
+        await dataService.UpsertToJsonFile("Commands", ("roll", rpg));
+        await messageService.SendMessage("[Ecstatic]: How the turn tables...");
     }
 
     /// <summary>
@@ -90,5 +95,25 @@ public class GeneralMessageHandler(IMessageService messageService, IDataService 
             msg = "```[Statement] it appears the developer fucked up and broke something.\n[Observation] The error is\n" + ex.Message + "```";
             await messageService.SendMessage(msg);
         }
+    }
+
+    /// <summary>
+    /// Contains Logic for Remember When Functionality
+    /// </summary>
+    private async Task RememberWhen(string[] commandParams)
+    {
+        if (commandParams[1] != "when")
+        {
+            // TODO: Improve processing of remembering phrases.
+            // Add safety checks and what not
+            var phrase = string.Join(" ", commandParams[1..]);
+            await dataService.AddRememberPhraseToFile(phrase);
+            await messageService.SendMessage("[Statement] I will remember that meatbag...");
+            return;
+        }
+
+        var remember = await dataService.GetRememberWhenPhraseFromFile();
+        await messageService.SendMessage("[Sarcasm]: I dont remember...\n" +
+        $"[Statement]:That was a joke human.\n[Recalling]: I remember {remember}");
     }
 }

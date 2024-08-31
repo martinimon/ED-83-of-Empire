@@ -1,9 +1,11 @@
 {
-    "remember": "general",
-    "test": "general",
-    "add": "general",
-
-    "gr": "steam",
-    "games": "steam",
-    "requestgame": "steam"
+  "remember": "general",
+  "test": "general",
+  "add": "general",
+  "changeRpg": "general",
+  "gr": "steam",
+  "games": "steam",
+  "requestGame": "steam",
+  "roll": "sprawl",
+  "displayGames": "steam"
 }
