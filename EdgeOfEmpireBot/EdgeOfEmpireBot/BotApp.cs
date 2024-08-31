@@ -145,16 +145,17 @@ public class BotApp
         // If the environment variable is not set or is empty, attempt to read from the file
         if (string.IsNullOrEmpty(token))
         {
-            try
-            {
-                string path = Path.Combine("Data/token.txt");
-                token = File.ReadAllText(path);  // Fallback to reading the token from the file if the environment variable is not set
-            }
-            catch (Exception ex)
-            {
-                token = string.Empty;
-                Console.WriteLine($"Error reading token from file: {ex.Message}");
-            }
+            token = string.Empty;
+            // try
+            // {
+            //     string path = Path.Combine("Data/token.txt");
+            //     token = File.ReadAllText(path);  // Fallback to reading the token from the file if the environment variable is not set
+            // }
+            // catch (Exception ex)
+            // {
+            //     token = string.Empty;
+            //     Console.WriteLine($"Error reading token from file: {ex.Message}");
+            // }
         }
 
         return token;
