@@ -3,7 +3,9 @@ name: "Deploy to Server"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: 
+      - main
+      - feature/27-create-deployment-workflow
 
 
 jobs: 
