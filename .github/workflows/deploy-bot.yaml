@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/27-create-deployment-workflow  # Add your branches here
+      - feature/27-create-deployment-workflow
 
 jobs:
   deploy:
@@ -18,9 +18,9 @@ jobs:
       env:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}  # Inject Discord token from GitHub Secrets
       run: |
-        cd ~/dev/discord_bot
+        cd ~/dev/discord_bot/EdgeOfEmpireBot
         git pull origin main
-        dotnet publish -c Release -o output
-        
-        # Run your bot, inject token if needed
-        nohup dotnet output/YourBot.dll &
+        dotnet publish EdgeOfEmpireBot.csproj -c Release -o output
+
+        # Run your bot with the injected token (make sure your application uses the token correctly)
+        nohup dotnet output/EdgeOfEmpireBot.dll &
