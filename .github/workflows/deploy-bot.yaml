@@ -41,11 +41,8 @@ jobs:
       working-directory: EdgeOfEmpireBot
 
     - name: Start Bot on Server
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}  # Ensure the environment variable is passed to the script
-      run: |
-        # Export the environment variable for the current shell
-        export DISCORD_TOKEN=${DISCORD_TOKEN}
-
-        # Use sudo with -E to preserve the environment variable
-        sudo -E /home/martinimon/scripts/start_bot.sh
+          run: |
+            sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
+          env:
+            DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          shell: /usr/bin/bash -e {0}
