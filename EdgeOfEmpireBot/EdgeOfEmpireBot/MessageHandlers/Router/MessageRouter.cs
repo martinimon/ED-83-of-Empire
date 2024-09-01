@@ -12,7 +12,7 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
         try
         {
             Console.WriteLine("Processing Message...");
-            if (!message.Content.StartsWith('.'))
+            if (!message.Content.StartsWith(".", StringComparison.OrdinalIgnoreCase))
             {
                 // Ignore message.
                 Console.WriteLine("Ignoring Message....");
@@ -66,7 +66,7 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     /// </returns>
     private async Task<string> GetProcess(string command)
     {
-        var commands = await dataService.ReadFromFile<Dictionary<string, string>>("Commands");
+        var commands = await dataService.ReadFromFileAndDeserialize<Dictionary<string, string>>("Commands");
 
         if (!commands.TryGetValue(command!, out var process))
         {
