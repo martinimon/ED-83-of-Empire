@@ -6,45 +6,39 @@ on:
       - main
       - feature/27-create-deployment-workflow
 
+
 jobs:
-  restore_dependencies:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  build_and_deploy:
+  runs-on: self-hosted
 
-      - name: Restore dependencies
-        run: dotnet restore EdgeOfEmpireBot/EdgeOfEmpireBot.sln
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+  steps:
 
-  build:
-    runs-on: ubuntu-latest
-    needs: restore_dependencies  # This job depends on the restore_dependencies job
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      with:
+        ref: ${{ github.ref }}
 
-      - name: Build
-        run: dotnet build EdgeOfEmpireBot/EdgeOfEmpireBot.sln --no-restore
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+    - name: Restore Dependencies
+      run: dotnet restore
+      enc: 
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      working-directory: EdgeOfEmpireBot
+    
+    - name: Build 
+      run: dotnet build --no-restore --output ../MainBotOutput
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      working-directory: EdgeOfEmpireBot
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: build  # This job depends on the build job
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Publish
-        run: dotnet publish EdgeOfEmpireBot/EdgeOfEmpireBot.sln --no-restore -c Release -o ../MainBotOutput
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+    - name: Publish
+      run: dotnet publish --no-restore -c Release -o ../MainBotOutput
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      working-directory: EdgeOfEmpireBot
 
   start_bot:
-    runs-on: ubuntu-latest
-    needs: publish  # This job depends on the publish job
+  needs: build_and_deploy
+  runs-on: self-hosted
     steps:
       - name: Start Bot on Server
         run: |
