@@ -19,12 +19,6 @@
     <None Update="Data/games.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data/steamToken.template.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Data/steamToken.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="Data/token.template.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

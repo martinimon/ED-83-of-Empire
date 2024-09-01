@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.WebSocket;
 using HK47.MessageHandlers;
 using HK47.MessageHandlers.Interfaces;
@@ -106,7 +107,14 @@ public class BotApp
     //private Task MessageReceived(SocketMessage msg)
     private async Task MessageReceived(SocketMessage msg)
     {
-        await messageRouter.ProcessMessage(msg);
+        try 
+        {
+            await messageRouter.ProcessMessage(msg);
+        }
+        catch(Exception ex)
+        {
+         await messageService.SendMessage(ex.Message);   
+        }
     }
 
     /// <summary>
