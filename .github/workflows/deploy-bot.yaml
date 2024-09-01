@@ -10,7 +10,6 @@ on:
 jobs:
   build_and_deploy:
   runs-on: self-hosted
-
   steps:
 
     - name: Checkout Code
@@ -36,13 +35,14 @@ jobs:
         DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
       working-directory: EdgeOfEmpireBot
 
+
   start_bot:
   needs: build_and_deploy
   runs-on: self-hosted
-    steps:
-      - name: Start Bot on Server
-        run: |
-          sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        shell: /usr/bin/bash -e {0}
+  steps:
+    - name: Start Bot on Server
+      run: |
+        sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      shell: /usr/bin/bash -e {0}
