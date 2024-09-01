@@ -6,43 +6,40 @@ on:
       - main
       - feature/27-create-deployment-workflow
 
-
 jobs:
   build_and_deploy:
-  runs-on: self-hosted
-  steps:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.ref }}
 
-    - name: Checkout Code
-      uses: actions/checkout@v2
-      with:
-        ref: ${{ github.ref }}
+      - name: Restore Dependencies
+        run: dotnet restore
+        env:  # Fixed typo from "enc" to "env"
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        working-directory: EdgeOfEmpireBot
 
-    - name: Restore Dependencies
-      run: dotnet restore
-      enc: 
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      working-directory: EdgeOfEmpireBot
-    
-    - name: Build 
-      run: dotnet build --no-restore --output ../MainBotOutput
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      working-directory: EdgeOfEmpireBot
+      - name: Build 
+        run: dotnet build --no-restore --output ../MainBotOutput
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        working-directory: EdgeOfEmpireBot
 
-    - name: Publish
-      run: dotnet publish --no-restore -c Release -o ../MainBotOutput
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      working-directory: EdgeOfEmpireBot
-
+      - name: Publish
+        run: dotnet publish --no-restore -c Release -o ../MainBotOutput
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        working-directory: EdgeOfEmpireBot
 
   start_bot:
-  needs: build_and_deploy
-  runs-on: self-hosted
-  steps:
-    - name: Start Bot on Server
-      run: |
-        sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-      shell: /usr/bin/bash -e {0}
+    needs: build_and_deploy  # Fixed indentation here
+    runs-on: self-hosted
+    steps:
+      - name: Start Bot on Server
+        run: |
+          sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        shell: /usr/bin/bash -e {0}
