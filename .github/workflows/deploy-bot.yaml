@@ -41,8 +41,8 @@ jobs:
       working-directory: EdgeOfEmpireBot
 
     - name: Start Bot on Server
-          run: |
-            sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
-          env:
-            DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          shell: /usr/bin/bash -e {0}
+      run: |
+        sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
+      env:
+        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+      shell: /usr/bin/bash -e {0}
