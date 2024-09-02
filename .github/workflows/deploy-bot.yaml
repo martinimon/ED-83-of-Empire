@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Start Bot on Server
         run: |
-          sudo DISCORD_TOKEN=${DISCORD_TOKEN} /home/martinimon/scripts/start_bot.sh
+          sudo DISCORD_TOKEN=${DISCORD_TOKEN} DISCORD_CHANNEL_ID: $ {{ secrets.DISCORD_CHANNEL_ID }} /home/martinimon/scripts/start_bot.sh
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           DISCORD_CHANNEL_ID: $ {{ secrets.DISCORD_CHANNEL_ID }}
