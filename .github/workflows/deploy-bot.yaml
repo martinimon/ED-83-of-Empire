@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -19,7 +19,7 @@ jobs:
         run: dotnet restore
         working-directory: EdgeOfEmpireBot
 
-      - name: Build 
+      - name: Build
         run: dotnet build --no-restore --output ../MainBotOutput
         working-directory: EdgeOfEmpireBot
 
@@ -28,13 +28,13 @@ jobs:
         working-directory: EdgeOfEmpireBot
 
   start_bot:
-    needs: build_and_deploy  
+    needs: build_and_deploy
     runs-on: self-hosted
     steps:
       - name: Start Bot on Server
         run: |
           sudo DISCORD_TOKEN=${DISCORD_TOKEN} DISCORD_CHANNEL_ID=${DISCORD_CHANNEL_ID} /home/martinimon/scripts/start_bot.sh
-      env:
-        DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-        DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
-      shell: /usr/bin/bash -e {0}
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+        shell: /usr/bin/bash -e {0}
