@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.WebSocket;
 using HK47.MessageHandlers;
 using HK47.MessageHandlers.Interfaces;
@@ -20,7 +21,11 @@ public class BotApp
     /// </summary>
     public BotApp()
     {
-        const long channelId = 1062707370809098291;
+        // Retrieve the environment variable
+        var discordChannelId = Environment.GetEnvironmentVariable("DISCORD_CHANNEL_ID");
+
+        // Set the channelId to the environment variable if it exists, otherwise use the default value
+        ulong channelId = string.IsNullOrEmpty(discordChannelId) ? 1062707370809098291 : ulong.Parse(discordChannelId);
 
         serviceProvider = CreateProvider();
         this.client = serviceProvider.GetRequiredService<DiscordSocketClient>();
@@ -106,7 +111,14 @@ public class BotApp
     //private Task MessageReceived(SocketMessage msg)
     private async Task MessageReceived(SocketMessage msg)
     {
-        await messageRouter.ProcessMessage(msg);
+        try 
+        {
+            await messageRouter.ProcessMessage(msg);
+        }
+        catch(Exception ex)
+        {
+         await messageService.SendMessage(ex.Message);   
+        }
     }
 
     /// <summary>
@@ -139,19 +151,28 @@ public class BotApp
     /// <returns>the token string</returns>
     private static string GetToken()
     {
-        var token = string.Empty;
+        // Attempt to get the token from an environment variable named "DISCORD_TOKEN"
+        var token = Environment.GetEnvironmentVariable("DISCORD_TOKEN");
+        Console.WriteLine(token);
+        // If the environment variable is not set or is empty, attempt to read from the file
+        if (string.IsNullOrEmpty(token))
+        {
+            token = string.Empty;
+            try
+            {
+                string path = Path.Combine("Data/token.txt");
+                token = File.ReadAllText(path);  // Fallback to reading the token from the file if the environment variable is not set
+            }
+            catch (Exception ex)
+            {
+                token = string.Empty;
+                Console.WriteLine($"Error reading token from file: {ex.Message}");
+            }
+        }
 
-        try
-        {
-            string path = Path.Combine("Data/token.txt");
-            token = File.ReadAllText(path);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
         return token;
     }
+
 
     /// <summary>
     /// Logs a message to console.

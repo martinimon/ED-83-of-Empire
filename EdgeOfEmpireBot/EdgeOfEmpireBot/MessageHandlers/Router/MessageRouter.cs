@@ -1,3 +1,4 @@
+using System;
 using Discord.WebSocket;
 using HK47.MessageHandlers.Interfaces;
 using HK47.Services;
@@ -66,6 +67,7 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
     /// </returns>
     private async Task<string> GetProcess(string command)
     {
+        try{
         var commands = await dataService.ReadFromFile<Dictionary<string, string>>("Commands");
 
         if (!commands.TryGetValue(command!, out var process))
@@ -75,5 +77,11 @@ public class MessageRouter(IDataService dataService, ISteamMessageHandler steamH
         }
 
         return process;
+        }
+        catch (Exception ex)
+        {
+            await messageService.SendMessage(ex.Message);
+            return string.Empty;
+        }
     }
 }
