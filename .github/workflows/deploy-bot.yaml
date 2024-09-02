@@ -4,11 +4,10 @@ on:
   push:
     branches:
       - main
-      - feature/27-create-deployment-workflow
 
 jobs:
   build_and_deploy:
-    runs-on: self-hosted
+    runs-on: self-hosted 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
@@ -17,23 +16,14 @@ jobs:
 
       - name: Restore Dependencies
         run: dotnet restore
-        env:  
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DISCORD_CHANNEL_ID: $ {{ secrets.DISCORD_CHANNEL_ID }}
         working-directory: EdgeOfEmpireBot
 
       - name: Build 
         run: dotnet build --no-restore --output ../MainBotOutput
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DISCORD_CHANNEL_ID: $ {{ secrets.DISCORD_CHANNEL_ID }}
         working-directory: EdgeOfEmpireBot
 
       - name: Publish
         run: dotnet publish --no-restore -c Release -o ../MainBotOutput
-        env:
-          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
-          DISCORD_CHANNEL_ID: $ {{ secrets.DISCORD_CHANNEL_ID }}
         working-directory: EdgeOfEmpireBot
 
   start_bot:
