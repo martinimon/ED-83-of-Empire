@@ -4,6 +4,10 @@ on:
   push:
     branches: [ "main" ]  # This triggers the workflow when code is merged into main
   pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
     branches: [ "*" ]  # This triggers the workflow on pull requests to any branch
 
 jobs:
